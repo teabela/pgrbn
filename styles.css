@@ -738,8 +738,7 @@ p {
   margin: 0;
 }
 
-.obituary-preview-grid,
-.obituary-grid {
+.obituary-preview-grid {
   display: grid;
   gap: 28px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -747,14 +746,43 @@ p {
   max-width: 1180px;
 }
 
-.obituary-preview img,
-.obituary-grid img {
+.obituary-preview img {
   background: white;
   border-radius: 8px;
   box-shadow: var(--shadow);
   height: 100%;
   object-fit: cover;
   width: 100%;
+}
+
+.obituary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+}
+
+.obituary-grid > a {
+  display: block;
+  width: 767px;
+  max-width: 100%;
+  height: 532px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.obituary-grid img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.obituaries-section {
+  background: var(--paper-light);
+  padding: 60px 130px 80px;
 }
 
 .cta-section {
@@ -1166,78 +1194,161 @@ p {
 }
 
 .contact-layout {
-  background: var(--paper);
-  padding: 72px clamp(24px, 7vw, 128px);
+  background: var(--paper-light);
+  display: flex;
+  justify-content: center;
+  padding: 0 130px 80px;
 }
 
 .contact-card {
   background: white;
-  border: 1px solid rgba(157, 137, 118, 0.36);
+  border: 1px solid #d5bba2;
   border-radius: 20px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
   display: grid;
-  grid-template-columns: 390px minmax(0, 1fr);
-  margin: 0 auto;
-  max-width: 980px;
+  grid-template-columns: 394px minmax(0, 1fr);
+  height: 528px;
+  max-width: 100%;
   overflow: hidden;
+  width: 952px;
 }
 
 .contact-info {
-  background: linear-gradient(180deg, rgba(241, 231, 226, 0.94), rgba(241, 231, 226, 0.82)), url("assets/contact-side-fade.png") bottom right / cover no-repeat;
-  display: grid;
-  gap: 18px;
-  padding: 34px;
+  background: linear-gradient(180deg, rgba(241, 231, 226, 0.78), rgba(241, 231, 226, 0.94)), url("assets/contact-side-fade.png") center / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  position: relative;
+}
+
+.contact-info::after {
+  background: linear-gradient(to right, transparent, white);
+  content: "";
+  height: 100%;
+  pointer-events: none;
+  position: absolute;
+  right: -1px;
+  top: 0;
+  width: 96px;
 }
 
 .contact-info h2 {
-  font-size: 18px;
+  color: var(--ink);
+  font: 700 16px/21.45px var(--sans);
+  letter-spacing: 0.325px;
+  margin: 0 0 32px;
   text-transform: uppercase;
 }
 
-.contact-info p,
-.contact-info dd {
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.contact-info dl {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-}
-
-.contact-info div {
+.contact-info-list {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.contact-info dd {
+.contact-info-list li {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font: 500 16px/20px var(--sans);
+  gap: 10px;
+}
+
+.contact-info-list li svg {
+  color: var(--ink);
+  flex-shrink: 0;
+  height: 16px;
+  width: 16px;
+}
+
+.contact-info-list li a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-info-list li a:hover {
+  color: var(--ink);
+}
+
+.contact-podaci {
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  font: 500 16px/20px var(--sans);
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-podaci p {
   margin: 0;
+}
+
+.contact-podaci strong {
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .contact-form {
-  display: grid;
-  gap: 16px;
-  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 23px 25px 23px 31px;
+}
+
+.contact-form .input-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .contact-form label {
   color: var(--muted);
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  font: 400 14px/21px var(--sans);
   gap: 8px;
 }
 
 .contact-form input,
 .contact-form textarea {
-  border: 1px solid var(--line);
+  background: white;
+  border: 0.667px solid #6b625a;
   border-radius: 8px;
-  font: 400 16px/1.45 var(--sans);
-  padding: 11px 12px;
+  box-sizing: border-box;
+  color: var(--ink);
+  font: 400 14px/21px var(--sans);
+  padding: 8px 12px;
+}
+
+.contact-form input {
+  height: 36px;
 }
 
 .contact-form textarea {
-  min-height: 150px;
+  height: 159px;
   resize: vertical;
+}
+
+.contact-form button[type="submit"] {
+  background: #d5bba2;
+  border: 0;
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+  font: 500 14px/21px var(--sans);
+  padding: 10px 40px;
+  transition: filter 0.15s ease;
+  width: 100%;
+}
+
+.contact-form button[type="submit"]:hover {
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
 }
 
 .contact-form.was-validated :invalid {
@@ -1352,10 +1463,18 @@ p {
   .gerber-grid,
   .service-grid,
   .obituary-preview-grid,
-  .obituary-grid,
   .footer-grid,
   .contact-card {
     grid-template-columns: 1fr;
+  }
+
+  .obituaries-section {
+    padding: 40px 20px 60px;
+  }
+
+  .obituary-grid > a {
+    height: auto;
+    aspect-ratio: 767 / 532;
   }
 
   .gerber-heading {
@@ -1363,7 +1482,25 @@ p {
   }
 
   .contact-card {
+    height: auto;
     max-width: 680px;
+  }
+
+  .contact-info {
+    min-height: 320px;
+  }
+
+  .contact-info::after {
+    background: linear-gradient(to bottom, transparent, white);
+    bottom: -1px;
+    height: 60px;
+    right: 0;
+    top: auto;
+    width: 100%;
+  }
+
+  .contact-layout {
+    padding: 0 20px 60px;
   }
 }
 
