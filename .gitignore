@@ -1,3 +1,7 @@
 .claude
 .playwright-mcp
+.mcp.json.superpowers/
+figma-ref/
+.superpowers/
+*.png
 .mcp.json
