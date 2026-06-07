@@ -3,11 +3,26 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      // Lay the desktop design out at its 1440px reference width, then scale to fill any viewport.
+      // Below the mobile breakpoint we drop the zoom and let the responsive @media rules take over.
+      (function () {
+        var d = document.documentElement;
+        function fit() {
+          d.style.zoom = '';
+          var w = d.clientWidth || window.innerWidth;
+          d.style.zoom = w >= 980 ? w / 1440 : '';
+        }
+        fit();
+        window.addEventListener('resize', fit);
+        window.addEventListener('DOMContentLoaded', fit);
+      })();
+    </script>
     <title>Kontakt | Pogrebne usluge Balan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=11">
+    <link rel="stylesheet" href="styles.css?v=14">
   </head>
   <body>
     <header class="site-header">
@@ -24,7 +39,7 @@
     </header>
 
     <main>
-      <section class="page-hero" style="--hero-image: url('assets/hero-contact.png')">
+      <section class="page-hero page-hero--veil" style="--hero-image: url('assets/hero-contact.png')">
         <div class="page-hero-copy">
           <h1>Kontakt</h1>
           <img class="ornament" src="assets/divider.png" alt="">
@@ -69,7 +84,6 @@
         <div class="footer-brand">
           <a class="logo" href="index.html"><span>Balan</span><small>Pogrebne usluge i cvetni aranžmani</small></a>
           <p>Pružamo kompletne pogrebne usluge sa brigom i poštovanjem, dostupni 24 sata dnevno.</p>
-          <a class="button primary footer-cta" href="kontakt.html">Kontakt</a>
         </div>
         <div class="footer-col">
           <h3>Pogrebne usluge</h3>

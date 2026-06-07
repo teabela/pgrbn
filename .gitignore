@@ -1,7 +1,14 @@
 .claude
-.playwright-mcp
-.mcp.json.superpowers/
-figma-ref/
-.superpowers/
-*.png
 .mcp.json
+.superpowers/
+.playwright-mcp/
+figma-ref/
+
+# Secrets — never commit
+.figma-token
+
+# Session scratch screenshots (safe to delete)
+chk-*.png
+seam-*.png
+retina*.png
+sub-*-1920.png
