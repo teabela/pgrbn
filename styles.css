@@ -224,15 +224,9 @@ p {
 .hero {
   --hero-image: url("assets/hero.png?v=2");
   min-height: 775px;
-  /* Homepage hero now melts into O nama below (per client): cream bottom fade + no divider. */
-  background:
-    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 17%),
-    var(--hero-image) center / cover no-repeat;
-}
-
-/* Homepage seams all blend (client override of the crisp-hero default): drop the divider. */
-.hero::after {
-  display: none;
+  /* Crisp boundary (per client / Figma): the hero keeps a clearly-defined edge — its gold
+     divider (.hero::after, inherited) separates it from O nama; no cream blend below. */
+  background: var(--hero-image) center / cover no-repeat;
 }
 
 .page-hero {
@@ -387,7 +381,9 @@ p {
 }
 
 .section-title .decor .line {
-  background: linear-gradient(90deg, var(--decor-bg, #fdf7f3), var(--line));
+  /* dark (--line) sits next to the title text and fades out to light at the outer edge
+     (per client / Figma); .decor-left mirrors this via scaleX(-1) below. */
+  background: linear-gradient(90deg, var(--line), var(--decor-bg, #fdf7f3));
   border-radius: 999px;
   display: block;
   height: 3px;
@@ -442,8 +438,8 @@ p {
     linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 100%),
     radial-gradient(720px 520px at 390px 616px,
       #fdf7f3 0%, #fdf7f3 22%, rgba(253, 247, 243, 0.55) 58%, rgba(253, 247, 243, 0) 100%),
-    /* bottom cream fade — bridges the seam into Cvećara (mirrors its top ellipse bleeding up) */
-    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0.45) 13%, rgba(253, 247, 243, 0) 32%),
+    /* bottom cream fade — melts the arrangement into the Cvećara cream band below */
+    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0.62) 16%, rgba(253, 247, 243, 0) 36%),
     url("assets/about-bg.png?v=2") center / cover no-repeat;
   background-color: var(--paper-light);
   padding-top: 60px;
@@ -574,8 +570,11 @@ p {
   background:
     /* top cream fade — melts up into O nama (symmetric with that section's cream bottom) */
     linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 20%),
-    radial-gradient(940px 640px at 1080px 300px, #fdf7f3 0%, #fdf7f3 42%, rgba(253, 247, 243, 0.78) 64%, rgba(253, 247, 243, 0) 90%),
-    radial-gradient(540px 360px at 900px 70px, #fdf7f3 0%, rgba(253, 247, 243, 0.6) 50%, rgba(253, 247, 243, 0) 100%),
+    /* cream wash behind the Cvećara card (right side). Core kept right-of-centre per Figma
+       125:563, but the left falloff is tightened so the cream clears the bouquet (~x600) and
+       no longer washes over the flowers (client: keep the bouquet clear and defined). */
+    radial-gradient(820px 620px at 1080px 320px, #fdf7f3 0%, #fdf7f3 34%, rgba(253, 247, 243, 0.72) 48%, rgba(253, 247, 243, 0) 60%),
+    radial-gradient(440px 320px at 980px 70px, #fdf7f3 0%, rgba(253, 247, 243, 0.5) 46%, rgba(253, 247, 243, 0) 70%),
     /* bottom cream fade — bridges into Usluge (mirrors Figma's seam band) */
     linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 16%),
     /* photo fills the section height (Figma stretches it), bouquet full size, left-anchored */
@@ -677,10 +676,16 @@ p {
   position: relative;
 }
 
-/* Homepage blend (client): the Usluge→Kontakt divider is dropped so the section melts
-   into the contact band below (see .cta-section's cream top fade). */
+/* Crisp boundary (per client / Figma): the Usluge→Kontakt seam keeps its greige divider so
+   the section is clearly separated from the contact band below — no blend. */
 .services-section::after {
-  display: none;
+  background: linear-gradient(90deg, #9b8d82 0%, rgba(241, 231, 225, 0.5) 46.6%, #afa197 100%);
+  bottom: 0;
+  content: "";
+  height: 9px;
+  left: 0;
+  position: absolute;
+  right: 0;
 }
 
 .services-section .section-title {
@@ -867,11 +872,9 @@ p {
 
 .cta-section {
   /* Figma darkens the photo with a 30% black overlay so the frosted card reads cleanly.
-     Homepage blend (client): the dark contact band melts UP out of the Usluge cream and
-     DOWN into the white footer — a cream top fade + white bottom fade over the dark photo. */
+     Crisp boundaries (per client / Figma): the dark contact band is clearly separated from the
+     Usluge section above and the white footer below — no gradient blend at either seam. */
   background:
-    linear-gradient(180deg, #f1e7e2 0%, rgba(241, 231, 226, 0) 14%),
-    linear-gradient(0deg, #ffffff 0%, rgba(255, 255, 255, 0) 14%),
     linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
     url("assets/contact-bg.png?v=2") center / cover no-repeat;
   padding: 60px 130px;
