@@ -224,6 +224,15 @@ p {
 .hero {
   --hero-image: url("assets/hero.png?v=2");
   min-height: 775px;
+  /* Homepage hero now melts into O nama below (per client): cream bottom fade + no divider. */
+  background:
+    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 17%),
+    var(--hero-image) center / cover no-repeat;
+}
+
+/* Homepage seams all blend (client override of the crisp-hero default): drop the divider. */
+.hero::after {
+  display: none;
 }
 
 .page-hero {
@@ -233,9 +242,24 @@ p {
 /* Galerija & Contact heroes: Figma floods the centre with a large blurred white
    glow so the scene reads as a soft, dreamy backdrop behind the title. */
 .page-hero--veil {
+  /* Figma floods the centre with THREE white blur-360 ellipses (one centre ≈50%/33%,
+     two flanking ≈30% & 70%) for a wide, soft, dreamy glow behind the title. */
   background:
-    radial-gradient(72% 70% at 50% 40%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.5) 42%, rgba(255, 255, 255, 0) 78%),
+    radial-gradient(58% 60% at 50% 33%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.42) 48%, rgba(255, 255, 255, 0) 80%),
+    radial-gradient(42% 42% at 30% 31%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 76%),
+    radial-gradient(42% 42% at 70% 31%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 76%),
     var(--hero-image) center top / cover no-repeat;
+}
+
+/* Hero-bottom divider colour varies per page in Figma (only the edges show; the
+   centre is transparent). Default is gold (#d5bba2 — home/oprema/cvecara); these
+   override it to paper (umrlice/galerija/contact) and greige (prevoz). */
+.page-hero--div-paper::after {
+  background: linear-gradient(90deg, #f1e7e2 0%, rgba(241, 231, 226, 0) 46.6%, #f1e7e2 100%);
+}
+
+.page-hero--div-greige::after {
+  background: linear-gradient(90deg, #a89793 0%, rgba(168, 151, 147, 0) 46.6%, #b7a49e 100%);
 }
 
 .hero-copy,
@@ -409,12 +433,17 @@ p {
 }
 
 .about-section {
-  /* Uses Figma's own photo (airy, arrangement to the right, empty cream space to
-     the left under the copy). The photo already supplies the pale backdrop, so
-     only a light cream gradient from the top + left is needed for legibility. */
+  /* Figma veils this photo with two highlights (over the airy arrangement, which sits
+     right): a full-height cream linear from the top, plus one large blurred cream
+     ellipse low-left (Figma: solid #fdf7f3, layer-blur 163, box [-124,298 1027×635],
+     centre ≈390,616). Reproduced as radial-gradient highlights so the copy stays
+     legible and the section melts into Cvećara below. */
   background:
-    linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 34%),
-    linear-gradient(90deg, #fdf7f3 0%, rgba(253, 247, 243, 0.5) 22%, rgba(253, 247, 243, 0) 50%),
+    linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 100%),
+    radial-gradient(720px 520px at 390px 616px,
+      #fdf7f3 0%, #fdf7f3 22%, rgba(253, 247, 243, 0.55) 58%, rgba(253, 247, 243, 0) 100%),
+    /* bottom cream fade — bridges the seam into Cvećara (mirrors its top ellipse bleeding up) */
+    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0.45) 13%, rgba(253, 247, 243, 0) 32%),
     url("assets/about-bg.png?v=2") center / cover no-repeat;
   background-color: var(--paper-light);
   padding-top: 60px;
@@ -539,7 +568,19 @@ p {
 }
 
 .gerber-section {
-  background: #f1e7e2 url("assets/cvecara-bg.png") left top / 100% auto no-repeat;
+  /* Figma washes the right ~60% (behind the Cvećara card) with four large blurred
+     cream ellipses (solid #fdf7f3, layer-blur 163) so the photo melts to cream and
+     the section reads as one with O nama above. Reproduced as radial highlights. */
+  background:
+    /* top cream fade — melts up into O nama (symmetric with that section's cream bottom) */
+    linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 20%),
+    radial-gradient(940px 640px at 1080px 300px, #fdf7f3 0%, #fdf7f3 42%, rgba(253, 247, 243, 0.78) 64%, rgba(253, 247, 243, 0) 90%),
+    radial-gradient(540px 360px at 900px 70px, #fdf7f3 0%, rgba(253, 247, 243, 0.6) 50%, rgba(253, 247, 243, 0) 100%),
+    /* bottom cream fade — bridges into Usluge (mirrors Figma's seam band) */
+    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 16%),
+    /* photo fills the section height (Figma stretches it), bouquet full size, left-anchored */
+    url("assets/cvecara-bg.png") left top / auto 100% no-repeat;
+  background-color: #fdf7f3;
   overflow: hidden;
   padding: 0 0 80px;
   position: relative;
@@ -623,7 +664,11 @@ p {
 
 .services-section {
   --decor-bg: #f1e7e2;
-  background: #f1e7e2;
+  /* Figma bridges the Cvećara→Usluge seam with a wide cream band; reproduced as a
+     cream fade at the top that melts into the section's #f1e7e2 body. */
+  background:
+    linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 24%),
+    #f1e7e2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -632,14 +677,10 @@ p {
   position: relative;
 }
 
+/* Homepage blend (client): the Usluge→Kontakt divider is dropped so the section melts
+   into the contact band below (see .cta-section's cream top fade). */
 .services-section::after {
-  background: linear-gradient(90deg, #9b8d82 0%, rgba(241, 231, 225, 0.5) 46.6%, #afa197 100%);
-  bottom: 0;
-  content: "";
-  height: 9px;
-  left: 0;
-  position: absolute;
-  right: 0;
+  display: none;
 }
 
 .services-section .section-title {
@@ -825,8 +866,12 @@ p {
 }
 
 .cta-section {
-  /* Figma darkens the photo with a 30% black overlay so the frosted card reads cleanly. */
+  /* Figma darkens the photo with a 30% black overlay so the frosted card reads cleanly.
+     Homepage blend (client): the dark contact band melts UP out of the Usluge cream and
+     DOWN into the white footer — a cream top fade + white bottom fade over the dark photo. */
   background:
+    linear-gradient(180deg, #f1e7e2 0%, rgba(241, 231, 226, 0) 14%),
+    linear-gradient(0deg, #ffffff 0%, rgba(255, 255, 255, 0) 14%),
     linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
     url("assets/contact-bg.png?v=2") center / cover no-repeat;
   padding: 60px 130px;
@@ -834,7 +879,7 @@ p {
 
 .cta-panel {
   align-items: center;
-  backdrop-filter: blur(4.05px);
+  backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.8);
   border-radius: 30px;
   box-shadow: 0 0 20px 0 rgba(71, 38, 11, 0.5);
@@ -1255,7 +1300,11 @@ p {
 }
 
 .contact-info {
-  background: linear-gradient(180deg, rgba(241, 231, 226, 0.78), rgba(241, 231, 226, 0.94)), url("assets/contact-side-fade.png") center / cover no-repeat;
+  /* Figma veils this panel with stacked white blur-360 ellipses over the photo (not a
+     cream wash): mostly white, cleaner at the top (info), faint floral toward the base. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.72) 100%),
+    #f1e7e2 url("assets/contact-side-fade.png") center / cover no-repeat;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1524,6 +1573,12 @@ p {
 
   .gerber-heading {
     margin-left: 0;
+  }
+
+  /* On the stacked mobile layout the section is tall; revert the photo to a top strip
+     (width-fit) over cream so the Cvećara card text stays on cream and legible. */
+  .gerber-section {
+    background: #fdf7f3 url("assets/cvecara-bg.png") left top / 100% auto no-repeat;
   }
 
   .contact-card {
