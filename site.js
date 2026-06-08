@@ -94,3 +94,12 @@ document.querySelectorAll("form.js-contact-form").forEach((form) => {
     status.textContent = "Hvala. Poruka je spremna za slanje.";
   });
 });
+
+// "Scroll down" cue: smooth-scroll to the section immediately after the hero.
+document.querySelectorAll(".scroll-cue").forEach((cue) => {
+  cue.addEventListener("click", () => {
+    const hero = cue.closest(".hero, .page-hero");
+    const target = hero && hero.nextElementSibling;
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});

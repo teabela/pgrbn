@@ -9,7 +9,18 @@
   --shadow: 0 10px 28px rgba(71, 38, 11, 0.16);
   --serif: "Palatino Linotype", Palatino, Georgia, serif;
   --sans: "Montserrat", Arial, sans-serif;
+  /* Centered content column. Content sits in a 1180px-wide column (130px gutters at the
+     1440 reference). On screens wider than 1440 the head script caps zoom at 1x, so the
+     column holds its size and the side margins grow — content never spreads. Full-bleed
+     backgrounds, photos, gradients and dividers stay on the section and span the viewport.
+     The reusable gutter below is a no-op at <=1440 (resolves to --gutter) and only centres
+     content beyond 1440. */
+  --content-max: 1180px;
+  --gutter: 130px;
 }
+
+/* Reusable side gutter for full-bleed sections whose direct content should sit in the
+   centred column: 130px at <=1440, growing to (viewport - 1180)/2 beyond 1440. */
 
 * {
   box-sizing: border-box;
@@ -17,6 +28,10 @@
 
 html {
   scroll-behavior: smooth;
+  /* Keep anchored sections clear of the sticky header so their titles don't land hidden
+     behind it — applies to the scroll cue and the #about / #services nav links alike.
+     In px, so it tracks the 88px header across zoom levels. */
+  scroll-padding-top: 96px;
 }
 
 body {
@@ -52,8 +67,8 @@ p {
   box-shadow: 0 2px 12px 1px rgba(71, 38, 11, 0.25);
   display: grid;
   grid-template-columns: 220px 1fr 48px;
-  height: 108px;
-  padding: 0 130px;
+  height: 88px;
+  padding: 0 max(var(--gutter), calc((100% - var(--content-max)) / 2));
   position: sticky;
   top: 0;
   z-index: 20;
@@ -256,6 +271,55 @@ p {
   background: linear-gradient(90deg, #a89793 0%, rgba(168, 151, 147, 0) 46.6%, #b7a49e 100%);
 }
 
+/* "Scroll down" cue — a subtle, slowly-bobbing chevron pinned to the bottom-centre of every
+   hero, inviting the visitor to continue. Click scrolls to the next section (see site.js). */
+.scroll-cue {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  bottom: 28px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  left: 50%;
+  opacity: 0.72;
+  padding: 6px 10px;
+  position: absolute;
+  transform: translateX(-50%);
+  transition: opacity 0.2s ease;
+  z-index: 4;
+}
+
+.scroll-cue:hover,
+.scroll-cue:focus-visible {
+  opacity: 1;
+}
+
+.scroll-cue-text {
+  font: 500 12px/1 var(--sans);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.scroll-cue-icon {
+  animation: scroll-cue-bob 2.4s ease-in-out infinite;
+  height: 22px;
+  width: 22px;
+}
+
+@keyframes scroll-cue-bob {
+  0%, 100% { opacity: 0.55; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-icon {
+    animation: none;
+  }
+}
+
 .hero-copy,
 .page-hero-copy {
   display: flex;
@@ -436,7 +500,9 @@ p {
      legible and the section melts into Cvećara below. */
   background:
     linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 100%),
-    radial-gradient(720px 520px at 390px 616px,
+    /* anchored to centre (= 390px at the 1440 reference) so the cream spotlight tracks the
+       centred copy when the page is wider than 1440 instead of drifting to the left edge */
+    radial-gradient(720px 520px at calc(50% - 330px) 616px,
       #fdf7f3 0%, #fdf7f3 22%, rgba(253, 247, 243, 0.55) 58%, rgba(253, 247, 243, 0) 100%),
     /* bottom cream fade — melts the arrangement into the Cvećara cream band below */
     linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0.62) 16%, rgba(253, 247, 243, 0) 36%),
@@ -469,8 +535,11 @@ p {
   display: grid;
   gap: 0;
   grid-template-columns: 1fr 1fr;
-  margin: 0;
-  max-width: none;
+  /* The Cvećara block is a full-width 1440 design (bouquet left, card right, gold heading
+     bleeding off the right). Keep it 1440 wide and centre it beyond 1440 so the card's
+     right edge lines up with the other sections' column; the photo/cream stay full-bleed. */
+  margin: 0 auto;
+  max-width: 1440px;
 }
 
 .copy-block {
@@ -573,8 +642,10 @@ p {
     /* cream wash behind the Cvećara card (right side). Core kept right-of-centre per Figma
        125:563, but the left falloff is tightened so the cream clears the bouquet (~x600) and
        no longer washes over the flowers (client: keep the bouquet clear and defined). */
-    radial-gradient(820px 620px at 1080px 320px, #fdf7f3 0%, #fdf7f3 34%, rgba(253, 247, 243, 0.72) 48%, rgba(253, 247, 243, 0) 60%),
-    radial-gradient(440px 320px at 980px 70px, #fdf7f3 0%, rgba(253, 247, 243, 0.5) 46%, rgba(253, 247, 243, 0) 70%),
+    /* anchored to centre (= 1080px / 980px at the 1440 reference) so the cream stays behind the
+       Cvećara card when the page is wider than 1440 instead of sliding left of it */
+    radial-gradient(820px 620px at calc(50% + 360px) 320px, #fdf7f3 0%, #fdf7f3 34%, rgba(253, 247, 243, 0.72) 48%, rgba(253, 247, 243, 0) 60%),
+    radial-gradient(440px 320px at calc(50% + 260px) 70px, #fdf7f3 0%, rgba(253, 247, 243, 0.5) 46%, rgba(253, 247, 243, 0) 70%),
     /* bottom cream fade — bridges into Usluge (mirrors Figma's seam band) */
     linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 16%),
     /* photo fills the section height (Figma stretches it), bouquet full size, left-anchored */
@@ -672,7 +743,7 @@ p {
   flex-direction: column;
   align-items: center;
   gap: 80px;
-  padding: 30px 130px 60px;
+  padding: 30px max(var(--gutter), calc((100% - var(--content-max)) / 2)) 60px;
   position: relative;
 }
 
@@ -867,7 +938,7 @@ p {
 
 .obituaries-section {
   background: var(--paper-light);
-  padding: 60px 130px 80px;
+  padding: 60px max(var(--gutter), calc((100% - var(--content-max)) / 2)) 80px;
 }
 
 .cta-section {
@@ -877,7 +948,7 @@ p {
   background:
     linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
     url("assets/contact-bg.png?v=2") center / cover no-repeat;
-  padding: 60px 130px;
+  padding: 60px max(var(--gutter), calc((100% - var(--content-max)) / 2));
 }
 
 .cta-panel {
@@ -975,7 +1046,7 @@ p {
 
 .site-footer {
   background: white;
-  padding: 0 130px;
+  padding: 0 max(var(--gutter), calc((100% - var(--content-max)) / 2));
 }
 
 .footer-grid {
@@ -1111,7 +1182,7 @@ p {
   flex-direction: column;
   align-items: center;
   gap: 60px;
-  padding: 60px 130px 80px;
+  padding: 60px max(var(--gutter), calc((100% - var(--content-max)) / 2)) 80px;
   position: relative;
 }
 
@@ -1286,7 +1357,7 @@ p {
   background: var(--paper-light);
   display: flex;
   justify-content: center;
-  padding: 0 130px 80px;
+  padding: 0 max(var(--gutter), calc((100% - var(--content-max)) / 2)) 80px;
 }
 
 .contact-card {
@@ -1643,6 +1714,16 @@ p {
   .contact-layout,
   .cta-section {
     padding: 56px 20px;
+  }
+
+  .site-footer {
+    padding-inline: 20px;
+  }
+
+  /* The scroll cue is a desktop/tablet affordance; the short mobile hero leaves no room for
+     it without crowding the buttons, and scrolling is obvious on a phone — so hide it here. */
+  .scroll-cue {
+    display: none;
   }
 
   .section-title span {

@@ -4,14 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
-      // Lay the desktop design out at its 1440px reference width, then scale to fill any viewport.
+      // Lay the desktop design out at its 1440px reference width, then scale to fit the viewport.
+      // Cap the zoom at 1x: beyond 1440 the design stops magnifying, so content holds its size and
+      // centres (see the centred container in styles.css) instead of stretching on large screens.
       // Below the mobile breakpoint we drop the zoom and let the responsive @media rules take over.
       (function () {
         var d = document.documentElement;
         function fit() {
           d.style.zoom = '';
           var w = d.clientWidth || window.innerWidth;
-          d.style.zoom = w >= 980 ? w / 1440 : '';
+          d.style.zoom = w >= 980 ? Math.min(1, w / 1440) : '';
         }
         fit();
         window.addEventListener('resize', fit);
@@ -22,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=15">
+    <link rel="stylesheet" href="styles.css?v=16">
   </head>
   <body>
     <header class="site-header">
@@ -45,6 +47,10 @@
           <img class="ornament" src="assets/divider.png" alt="">
           <p>Nabavka sanduka i sve ostale prateće opreme</p>
         </div>
+        <button class="scroll-cue" type="button" aria-label="Skrolujte nadole">
+          <span class="scroll-cue-text">Skrolujte</span>
+          <svg class="scroll-cue-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </section>
 
       <section class="section gallery-page">
@@ -110,6 +116,6 @@
         <p>Matični broj: 62277971 &nbsp;<strong>·</strong>&nbsp; PIB: 106799720</p>
       </div>
     </footer>
-    <script src="site.js"></script>
+    <script src="site.js?v=16"></script>
   </body>
 </html>
