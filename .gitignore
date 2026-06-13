@@ -12,3 +12,6 @@ chk-*.png
 seam-*.png
 retina*.png
 sub-*-1920.png
+grad-*.png
+cmp-*.png
+*.md

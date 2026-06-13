@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
-      // Lay the desktop design out at its 1440px reference width, then scale to fit the viewport.
-      // Cap the zoom at 1x: beyond 1440 the design stops magnifying, so content holds its size and
-      // centres (see the centred container in styles.css) instead of stretching on large screens.
-      // Below the mobile breakpoint we drop the zoom and let the responsive @media rules take over.
+      // Lay the desktop design out at its 1440px reference width, then scale it UNIFORMLY to the
+      // viewport at every width >= 980 (no 1x cap): the whole page — text, images, backgrounds,
+      // layout — scales together, so it looks identical at all desktop sizes, just larger/smaller,
+      // with nothing drifting relative to anything else. Below 980 we drop the zoom and let the
+      // responsive @media layouts take over.
       (function () {
         var d = document.documentElement;
         function fit() {
           d.style.zoom = '';
           var w = d.clientWidth || window.innerWidth;
-          d.style.zoom = w >= 980 ? Math.min(1, w / 1440) : '';
+          d.style.zoom = w >= 980 ? w / 1440 : '';
         }
         fit();
         window.addEventListener('resize', fit);
@@ -24,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=17">
+    <link rel="stylesheet" href="styles.css?v=22">
   </head>
   <body>
     <header class="site-header">

@@ -9,18 +9,18 @@
   --shadow: 0 10px 28px rgba(71, 38, 11, 0.16);
   --serif: "Palatino Linotype", Palatino, Georgia, serif;
   --sans: "Montserrat", Arial, sans-serif;
-  /* Centered content column. Content sits in a 1180px-wide column (130px gutters at the
-     1440 reference). On screens wider than 1440 the head script caps zoom at 1x, so the
-     column holds its size and the side margins grow — content never spreads. Full-bleed
-     backgrounds, photos, gradients and dividers stay on the section and span the viewport.
-     The reusable gutter below is a no-op at <=1440 (resolves to --gutter) and only centres
-     content beyond 1440. */
+  /* Centered content column. Content sits in a 1180px-wide column (130px gutters) at the 1440
+     reference. The head script now scales the whole 1440 layout UNIFORMLY to every viewport width,
+     so the page is always laid out at 1440 CSS px — the column, gutters, full-bleed backgrounds
+     and dividers all hold their 1440 proportions and just scale together. The reusable gutter
+     below therefore always resolves to --gutter (130px); it stays only as a harmless safety net
+     (and for the <980 responsive range where the zoom is off). */
   --content-max: 1180px;
   --gutter: 130px;
 }
 
-/* Reusable side gutter for full-bleed sections whose direct content should sit in the
-   centred column: 130px at <=1440, growing to (viewport - 1180)/2 beyond 1440. */
+/* Reusable side gutter for full-bleed sections; resolves to --gutter (130px) under the uniform
+   1440 layout, and only differs in the <980 responsive range where the zoom is off. */
 
 * {
   box-sizing: border-box;
@@ -271,19 +271,9 @@ p {
   background: linear-gradient(90deg, #a89793 0%, rgba(168, 151, 147, 0) 46.6%, #b7a49e 100%);
 }
 
-/* Above the 1440 reference the head-script zoom caps at 1x, so a fixed 775px hero would hold its
-   height while the viewport keeps widening — turning the hero into an ever-wider letterbox that
-   crops its subject out (the casket, the candles) at 1920 / 2560 / 4K. Grow the hero height in
-   step with the width instead: 775/1440 of the viewport keeps the hero's 1440 proportions, so the
-   full-bleed `cover` image holds its intended framing at any width. Clamped so it never grows
-   taller than one screen (100vh — for short / ultrawide windows) nor below the 775px design floor.
-   No-op at <=1440 (min-width:1441). Backgrounds stay full-bleed; only the box height changes. */
-@media (min-width: 1441px) {
-  .hero,
-  .page-hero {
-    min-height: clamp(775px, calc(100vw * 775 / 1440), 100vh);
-  }
-}
+/* The head-script zoom now scales the whole 1440 design uniformly at every width (no 1x cap), so
+   the hero keeps its fixed 775px box and simply scales with everything else — no special >1440
+   height handling needed (the old min-width:1441 clamp that fought the cap is gone). */
 
 /* "Scroll down" cue — a subtle, slowly-bobbing chevron pinned to the bottom-centre of every
    hero, inviting the visitor to continue. Click scrolls to the next section (see site.js). */
