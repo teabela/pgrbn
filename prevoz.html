@@ -5,16 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
       // Lay the desktop design out at its 1440px reference width, then scale it UNIFORMLY to the
-      // viewport at every width >= 980 (no 1x cap): the whole page — text, images, backgrounds,
+      // viewport at every width >= 1024 (no 1x cap): the whole page — text, images, backgrounds,
       // layout — scales together, so it looks identical at all desktop sizes, just larger/smaller,
-      // with nothing drifting relative to anything else. Below 980 we drop the zoom and let the
+      // with nothing drifting relative to anything else. Below 1024 we drop the zoom and let the
       // responsive @media layouts take over.
       (function () {
         var d = document.documentElement;
         function fit() {
           d.style.zoom = '';
-          var w = d.clientWidth || window.innerWidth;
-          d.style.zoom = w >= 980 ? w / 1440 : '';
+          var hero = document.querySelector('.hero, .page-hero');
+          if (hero) hero.style.minHeight = '';
+          if (window.matchMedia('(min-width: 1024px)').matches) {
+            var w = d.clientWidth || window.innerWidth;
+            var z = w / 1440;
+            d.style.zoom = z;
+            // Contain the first section to ONE screen. The width-based zoom scales the hero's
+            // height by z too, so wide/short monitors balloon it past the viewport (you'd have
+            // to scroll, and the top clips under the header). vh/px are NOT divided by zoom, so
+            // set the hero's min-height (unzoomed px) to render as exactly viewport - header.
+            if (hero) {
+              var header = document.querySelector('.site-header');
+              var headerCss = header ? header.offsetHeight : 0;
+              hero.style.minHeight = Math.max(280, window.innerHeight / z - headerCss) + 'px';
+            }
+          }
         }
         fit();
         window.addEventListener('resize', fit);
@@ -25,7 +39,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=22">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="styles.css?v=24">
   </head>
   <body>
     <header class="site-header">

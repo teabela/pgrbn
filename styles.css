@@ -1573,7 +1573,17 @@ p {
   width: 44px;
 }
 
-@media (max-width: 980px) {
+/* ============================================================================
+   RESPONSIVE — below the 1024 zoom cutoff the page is no longer scaled. These
+   tiers reproduce the designer's authored Tablet (768) layout (fluid up to 1023),
+   then stack to one column on phones (<768, inferred from the 768 intent).
+   ========================================================================== */
+
+/* ---- TABLET tier (<=1023, authored from the 768 frame) -------------------
+   Boundary is 1023.98 (not 1023) to pair gaplessly with the head script's zoom,
+   which turns on at matchMedia('(min-width:1024px)') — same media engine, so the
+   scaled-desktop range and this tablet range never gap or overlap at the edge. */
+@media (max-width: 1023.98px) {
   .site-header {
     grid-template-columns: 1fr 48px;
     min-height: 92px;
@@ -1626,17 +1636,49 @@ p {
 
   .hero,
   .page-hero {
-    min-height: 620px;
-    padding-top: 92px;
+    min-height: 560px;
+    padding-top: 100px;
   }
+
+  /* Homepage hero: buttons move up directly under the title — the Tablet frame
+     orders it title -> buttons -> ornament -> subtitle. (.hero-copy is flex-column.) */
+  .hero h1 { order: 1; }
+  .hero .hero-actions { order: 2; margin-top: 8px; }
+  .hero .ornament { order: 3; }
+  .hero p { order: 4; }
+
+  /* Tighten the vertical rhythm to the Tablet frame's more compact spacing (no zoom
+     below 1024, so desktop's 72px section padding / 240px card images read too airy). */
+  .section { padding: 48px clamp(20px, 6vw, 64px); }
+  .section-title { margin-bottom: 32px; }
+  .about-section .section-title { margin-bottom: 32px; }
+  .copy-block { gap: 24px; }
+  .service-grid,
+  .info-grid { gap: 20px; }
+  .service-card-image { height: 190px; }
+  .service-card-body { gap: 14px; }
+  .info-card { min-height: 0; }
+
+  /* Type scale — drop to ~0.70x the desktop px so it matches the Tablet frame AND lines
+     up with the zoomed desktop just above 1024 (zoom there is ~0.70). Without this, type
+     would jump LARGER crossing 1024 -> 1023, a backwards discontinuity as the screen narrows. */
+  .hero h1 { font-size: 34px; line-height: 46px; }
+  .hero p { font-size: 16px; line-height: 24px; }
+  .section-title h2,
+  .about-section .section-title h2 { font-size: 26px; line-height: 1.3; }
+  .copy-block h3,
+  .gerber-card h3 { font-size: 23px; line-height: 1.25; }
+  .copy-block p,
+  .gerber-card p { font-size: 17px; line-height: 26px; }
+  .stats strong { font-size: 20px; line-height: 28px; }
+  .service-card h3 { font-size: 18px; line-height: 1.25; }
+  .cta-panel h2 { font-size: 28px; line-height: 34px; }
+  .cta-sub { font-size: 16px; line-height: 26px; }
+  .phone-link { font-size: 32px; line-height: 44px; }
 
   .intro-strip,
   .about-grid,
-  .gerber-grid,
-  .service-grid,
-  .obituary-preview-grid,
-  .footer-grid,
-  .contact-card {
+  .obituary-preview-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1653,19 +1695,123 @@ p {
     margin-left: 0;
   }
 
-  /* On the stacked mobile layout the section is tall; revert the photo to a top strip
-     (width-fit) over cream so the Cvećara card text stays on cream and legible. */
+  /* Tablet keeps Cvećara 2-column. CRITICAL: the photo lives INSIDE the left column
+     (gerber-image), NOT as the section background — otherwise it sizes to the tall section
+     and bleeds across the checklist, making the text unreadable. Section stays solid cream
+     so the checklist on the right is always legible. (Phone reverts to a top strip below.) */
   .gerber-section {
-    background: #fdf7f3 url("assets/cvecara-bg.png") left top / 100% auto no-repeat;
+    background: #fdf7f3;
+    padding: 0 0 56px;
   }
 
+  .gerber-grid {
+    align-items: stretch;
+  }
+
+  .gerber-image {
+    background: url("assets/cvecara-bg.png") left center / cover no-repeat;
+    min-height: 320px;
+    padding: 0;
+  }
+
+  .gerber-body {
+    padding: 0 24px;
+  }
+
+  .gerber-card {
+    gap: 28px;
+    padding-top: 24px;
+  }
+
+  /* Tablet keeps the contact card 2-column (info | form) to match the Figma 768 frame:
+     fluid info column + auto height so it fits the narrower width. Phone stacks it below. */
   .contact-card {
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
     height: auto;
-    max-width: 680px;
+    max-width: 720px;
+    width: 100%;
   }
 
   .contact-info {
-    min-height: 320px;
+    min-height: 0;
+  }
+
+  /* keep the desktop right-edge fade (inherited), just narrower for the slimmer column */
+  .contact-info::after {
+    width: 64px;
+  }
+
+  .contact-layout {
+    padding: 0 20px 60px;
+  }
+
+  /* Naše usluge — the first service card spans the full width (featured); the other
+     two share a row. Info cards stay 3-across (unchanged from desktop). */
+  .service-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .service-grid .service-card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Match the frame's 2-up order (prevoz left, cvećara right) via `order`, keeping DOM
+     order oprema->cvećara->prevoz for tab/reader sequence. */
+  .service-grid .service-card:nth-child(3) { order: 1; }
+  .service-grid .service-card:nth-child(2) { order: 2; }
+
+  /* Kontakt CTA — swap the centred-container padding for simple fluid padding. */
+  .cta-section {
+    padding: 48px clamp(20px, 5vw, 48px);
+  }
+
+  .cta-panel {
+    gap: 28px;
+    padding: 28px 24px;
+  }
+
+  /* Footer — three link columns; the brand block is dropped to match the frame (the
+     logo is already in the header). */
+  .footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 36px 24px;
+  }
+
+  .footer-brand {
+    display: none;
+  }
+}
+
+/* ---- PHONE tier (<=767, inferred — stack the tablet's multi-col rows) ----- */
+@media (max-width: 767px) {
+  .hero,
+  .page-hero {
+    min-height: 480px;
+    padding-top: 88px;
+  }
+
+  /* Cvećara -> single column: the bouquet photo block (gerber-image) stacks on top,
+     the card (heading, checklist, button) below it on cream. Section stays solid cream
+     (inherited from the tablet tier); the old top-strip section background is gone. */
+  .gerber-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gerber-image {
+    min-height: 220px;
+  }
+
+  .gerber-body {
+    padding: 0 20px;
+  }
+
+  /* Kontakt card stacks on phones: info panel on top, form below, fade goes to the bottom. */
+  .contact-card {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-info {
+    min-height: 260px;
   }
 
   .contact-info::after {
@@ -1677,8 +1823,27 @@ p {
     width: 100%;
   }
 
-  .contact-layout {
-    padding: 0 20px 60px;
+  /* Service + info cards -> single column. */
+  .service-grid,
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-grid .service-card:first-child {
+    grid-column: auto;
+  }
+
+  /* Footer -> single column (brand stays hidden, inherited from the tablet tier). */
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Reset the tablet 2-up reorder so the single column stacks in DOM order. */
+  .service-grid .service-card { order: 0; }
+
+  /* Stats -> single column. */
+  .stats {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1693,7 +1858,7 @@ p {
 
   .hero,
   .page-hero {
-    min-height: 520px;
+    min-height: 440px;
     padding: 64px 20px;
   }
 
