@@ -3,38 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-      // Lay the desktop design out at its 1440px reference width, then scale it UNIFORMLY to the
-      // viewport at every width >= 1024 (no 1x cap): the whole page — text, images, backgrounds,
-      // layout — scales together, so it looks identical at all desktop sizes, just larger/smaller,
-      // with nothing drifting relative to anything else. Below 1024 we drop the zoom and let the
-      // responsive @media layouts take over.
-      (function () {
-        var d = document.documentElement;
-        function fit() {
-          d.style.zoom = '';
-          var hero = document.querySelector('.hero, .page-hero');
-          if (hero) hero.style.minHeight = '';
-          if (window.matchMedia('(min-width: 1024px)').matches) {
-            var w = d.clientWidth || window.innerWidth;
-            var z = w / 1440;
-            d.style.zoom = z;
-            // Contain the first section to ONE screen. The width-based zoom scales the hero's
-            // height by z too, so wide/short monitors balloon it past the viewport (you'd have
-            // to scroll, and the top clips under the header). vh/px are NOT divided by zoom, so
-            // set the hero's min-height (unzoomed px) to render as exactly viewport - header.
-            if (hero) {
-              var header = document.querySelector('.site-header');
-              var headerCss = header ? header.offsetHeight : 0;
-              hero.style.minHeight = Math.max(280, window.innerHeight / z - headerCss) + 'px';
-            }
-          }
-        }
-        fit();
-        window.addEventListener('resize', fit);
-        window.addEventListener('DOMContentLoaded', fit);
-      })();
-    </script>
+    <!-- Native responsive layout: no JS zoom. The design is fluid via CSS clamp()/svh,
+         with content held in a centred max-width column. -->
     <title>Pogrebne usluge Balan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,7 +12,7 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="favicon-32.png" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="stylesheet" href="styles.css?v=24">
+    <link rel="stylesheet" href="styles.css?v=32">
   </head>
   <body>
     <header class="site-header">
@@ -69,8 +39,8 @@
             <a class="button secondary" href="#services">Pregled usluga</a>
           </div>
         </div>
-        <button class="scroll-cue" type="button" aria-label="Skrolujte nadole">
-          <span class="scroll-cue-text">Skrolujte</span>
+        <button class="scroll-cue" type="button" aria-label="Nastavite dole">
+          <span class="scroll-cue-text">NASTAVITE DOLE</span>
           <svg class="scroll-cue-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </section>
@@ -86,7 +56,7 @@
               <div><strong>24h</strong><span>dostupnost</span></div>
               <div><strong>EU</strong><span>prevoz</span></div>
             </div>
-            <a class="button secondary with-chevron about-cta" href="kontakt.html"><span>Saznajte više o nama</span><svg class="btn-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="button primary with-chevron about-cta" href="kontakt.html"><span>Saznajte više o nama</span><svg class="btn-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
           </div>
         </div>
       </section>
@@ -107,7 +77,7 @@
                 <li><svg class="check-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="#9d8976" stroke-width="1.6"/><path d="m5.5 10.2 3.1 3.1 6-6" fill="none" stroke="#9d8976" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Dekoracija enterijera, automobila</span></li>
                 <li><svg class="check-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="#9d8976" stroke-width="1.6"/><path d="m5.5 10.2 3.1 3.1 6-6" fill="none" stroke="#9d8976" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Venci i suze</span></li>
               </ul>
-              <a class="button secondary with-chevron" href="cvecara.html"><span>Pogledajte ponudu</span><svg class="btn-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <a class="button primary with-chevron" href="cvecara.html"><span>Pogledajte ponudu</span><svg class="btn-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
           </article>
         </div>
@@ -167,6 +137,7 @@
         <div class="footer-brand">
           <a class="logo" href="index.html"><span>Balan</span><small>Pogrebne usluge i cvetni aranžmani</small></a>
           <p>Pružamo kompletne pogrebne usluge sa brigom i poštovanjem, dostupni 24 sata dnevno.</p>
+          <a class="button footer-cta" href="kontakt.html">Kontakt</a>
         </div>
         <div class="footer-col">
           <h3>Pogrebne usluge</h3>

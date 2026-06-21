@@ -15,8 +15,15 @@
      and dividers all hold their 1440 proportions and just scale together. The reusable gutter
      below therefore always resolves to --gutter (130px); it stays only as a harmless safety net
      (and for the <980 responsive range where the zoom is off). */
-  --content-max: 1180px;
-  --gutter: 130px;
+  --content-max: calc(1180px * var(--s));
+  --gutter: calc(130px * var(--s));
+  --header-height: calc(88px * var(--s));
+  /* Large-screen scale factor. Stays 1 through 1920 (Full HD = the 1440 design centred,
+     exactly per Figma), then steps up toward 1.5x by 3840 to match the Figma "Desktop 4K"
+     frame (title 464->691, body 16->24). Real CSS only — no transform/zoom. Ladder at EOF.
+     Every scalable px value is wrapped calc(... * var(--s)); since --s is 1 below 2100px the
+     wraps are a no-op at all existing breakpoints (incl. the <1024 tablet/phone tiers). */
+  --s: 1;
 }
 
 /* Reusable side gutter for full-bleed sections; resolves to --gutter (130px) under the uniform
@@ -31,7 +38,7 @@ html {
   /* Keep anchored sections clear of the sticky header so their titles don't land hidden
      behind it — applies to the scroll cue and the #about / #services nav links alike.
      In px, so it tracks the 88px header across zoom levels. */
-  scroll-padding-top: 96px;
+  scroll-padding-top: calc(96px * var(--s));
 }
 
 body {
@@ -66,8 +73,11 @@ p {
   background: #fdf7f3;
   box-shadow: 0 2px 12px 1px rgba(71, 38, 11, 0.25);
   display: grid;
-  grid-template-columns: 220px 1fr 48px;
-  height: 88px;
+  /* Symmetric side columns (logo | nav | spacer) so the nav centres on the PAGE, not in an
+     off-centre middle column — matches Figma, which page-centres the nav. The right 220px is
+     empty on desktop (the nav-toggle is hidden here); it only balances the logo column. */
+  grid-template-columns: calc(220px * var(--s)) 1fr calc(220px * var(--s));
+  height: var(--header-height);
   padding: 0 max(var(--gutter), calc((100% - var(--content-max)) / 2));
   position: sticky;
   top: 0;
@@ -75,30 +85,31 @@ p {
 }
 
 .logo {
+  align-items: flex-start;
   display: inline-flex;
   flex-direction: column;
   line-height: 1;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
   width: max-content;
 }
 
 .logo span {
   font-family: "Edwardian Script ITC", "Brush Script MT", cursive;
-  font-size: 48px;
-  height: 44px;
-  line-height: 44px;
+  font-size: calc(48px * var(--s));
+  height: calc(44px * var(--s));
+  line-height: calc(44px * var(--s));
 }
 
 .logo small {
-  font-size: 8px;
+  font-size: calc(8px * var(--s));
   font-weight: 500;
   letter-spacing: 0.02em;
 }
 
 .main-nav {
   align-items: center;
-  column-gap: 24px;
+  column-gap: calc(24px * var(--s));
   display: flex;
   justify-content: center;
   row-gap: 1px;
@@ -110,7 +121,7 @@ p {
   border: 0;
   color: var(--ink);
   cursor: pointer;
-  font: 400 16px/1 var(--sans);
+  font: 400 calc(16px * var(--s))/1 var(--sans);
   padding: 0;
   text-decoration: none;
 }
@@ -152,7 +163,7 @@ p {
   border-radius: 12px;
   box-shadow: 0 0 12px 0 rgba(71, 38, 11, 0.35);
   display: grid;
-  gap: 20px;
+  gap: calc(20px * var(--s));
   left: 50%;
   min-width: 168px;
   opacity: 0;
@@ -166,7 +177,7 @@ p {
 
 .dropdown a {
   color: var(--ink);
-  font: 400 16px/1 var(--sans);
+  font: 400 calc(16px * var(--s))/1 var(--sans);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -219,7 +230,7 @@ p {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 775px;
+  min-height: max(560px, calc(100svh - var(--header-height)));
   padding: 150px 24px 0;
   position: relative;
   text-align: center;
@@ -238,7 +249,7 @@ p {
 
 .hero {
   --hero-image: url("assets/hero.png?v=2");
-  min-height: 775px;
+  min-height: max(560px, calc(100svh - var(--header-height)));
   /* Crisp boundary (per client / Figma): the hero keeps a clearly-defined edge — its gold
      divider (.hero::after, inherited) separates it from O nama; no cream blend below. */
   background: var(--hero-image) center / cover no-repeat;
@@ -302,7 +313,7 @@ p {
 }
 
 .scroll-cue-text {
-  font: 500 12px/1 var(--sans);
+  font: 500 calc(12px * var(--s))/1 var(--sans);
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
@@ -329,52 +340,52 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  max-width: 980px;
+  gap: calc(20px * var(--s));
+  max-width: calc(980px * var(--s));
 }
 
 .hero h1,
 .page-hero h1 {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 48px;
+  font-size: clamp(30px, 3.4vw, calc(42px * var(--s)));
   font-style: italic;
   font-weight: 400;
-  line-height: 72px;
+  line-height: 1.3;
   margin: 0 auto;
-  max-width: 464px;
+  max-width: calc(520px * var(--s));
 }
 
 .ornament {
   display: block;
-  height: 25px;
+  height: calc(25px * var(--s));
   margin: 0;
   object-fit: cover;
-  width: 500px;
+  width: calc(500px * var(--s));
   max-width: 100%;
 }
 
 .hero p,
 .page-hero p {
   color: var(--ink);
-  font-size: 20px;
+  font-size: clamp(15px, 1.35vw, calc(18px * var(--s)));
   font-weight: 500;
-  line-height: 30px;
+  line-height: 1.55;
   margin: 0;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 32px;
+  gap: calc(32px * var(--s));
   justify-content: center;
-  margin-top: 35px;
+  margin-top: calc(35px * var(--s));
 }
 
 .cta-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: calc(20px * var(--s));
   justify-content: center;
   margin-top: 32px;
 }
@@ -384,9 +395,9 @@ p {
   border-radius: 999px;
   color: var(--ink);
   display: inline-flex;
-  font: 600 16px/24px var(--sans);
+  font: 600 calc(16px * var(--s))/1.5 var(--sans);
   justify-content: center;
-  padding: 12px 24px;
+  padding: calc(12px * var(--s)) calc(24px * var(--s));
   text-decoration: none;
   white-space: nowrap;
 }
@@ -395,23 +406,23 @@ p {
   background: var(--gold);
   border: 0;
   filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
-  min-width: 175px;
+  min-width: calc(175px * var(--s));
 }
 
 .button.secondary {
   border: 1px solid var(--line);
-  height: 48px;
-  padding: 13px 25px;
+  height: calc(48px * var(--s));
+  padding: calc(13px * var(--s)) calc(25px * var(--s));
 }
 
 .section {
-  padding: 72px clamp(24px, 7vw, 128px);
+  padding: clamp(48px, 6vh, calc(84px * var(--s))) clamp(24px, 7vw, calc(128px * var(--s)));
 }
 
 .section-title {
   align-items: center;
   display: flex;
-  gap: 21px;
+  gap: calc(21px * var(--s));
   justify-content: center;
   margin: 0 auto 48px;
   text-align: center;
@@ -420,10 +431,10 @@ p {
 .section-title h2 {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 36px;
+  font-size: clamp(25px, 2.6vw, calc(31px * var(--s)));
   font-style: italic;
   font-weight: 400;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .section-title .decor {
@@ -470,7 +481,7 @@ p {
   display: grid;
   gap: 24px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 32px clamp(24px, 7vw, 128px);
+  padding: 32px clamp(24px, 7vw, calc(128px * var(--s)));
 }
 
 .intro-item {
@@ -487,7 +498,7 @@ p {
 
 .intro-item strong {
   font-family: var(--serif);
-  font-size: 26px;
+  font-size: clamp(20px, 1.8vw, calc(24px * var(--s)));
   font-weight: 400;
 }
 
@@ -497,33 +508,37 @@ p {
 }
 
 .about-section {
-  /* Figma veils this photo with two highlights (over the airy arrangement, which sits
-     right): a full-height cream linear from the top, plus one large blurred cream
-     ellipse low-left (Figma: solid #fdf7f3, layer-blur 163, box [-124,298 1027×635],
-     centre ≈390,616). Reproduced as radial-gradient highlights so the copy stays
-     legible and the section melts into Cvećara below. */
+  /* The arrangement+candles sit on the RIGHT, copy on the left. NOTE: assets/about-bg.png is
+     stored MIRRORED (horizontally flipped, magick -flop) vs the Figma source blob 0ee96579db —
+     in Figma the o-nama image node is net-flipped (node.m00=-1 × fill.m00=+1), so the raw blob
+     (arrangement LEFT) must be -flop'd to put the arrangement RIGHT. The pixel-signature asset-sync
+     will therefore flag it as "diverged" from the blob — that divergence is INTENTIONAL, do not revert.
+     Figma veils the arrangement with two cream highlights: a full-height cream linear from the top,
+     plus one large blurred cream ellipse low-left (Figma: solid #fdf7f3, layer-blur 163,
+     box [-124,298 1027×635], centre ≈390,616) that keeps the left-hand copy legible. Reproduced as
+     radial-gradient highlights so the copy stays legible and the section melts into Cvećara below. */
   background:
     linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 100%),
     /* anchored to centre (= 390px at the 1440 reference) so the cream spotlight tracks the
        centred copy when the page is wider than 1440 instead of drifting to the left edge */
-    radial-gradient(720px 520px at calc(50% - 330px) 616px,
+    radial-gradient(calc(720px * var(--s)) calc(520px * var(--s)) at calc(50% - 330px * var(--s)) calc(616px * var(--s)),
       #fdf7f3 0%, #fdf7f3 22%, rgba(253, 247, 243, 0.55) 58%, rgba(253, 247, 243, 0) 100%),
     /* bottom cream fade — melts the arrangement into the Cvećara cream band below */
     linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0.62) 16%, rgba(253, 247, 243, 0) 36%),
-    url("assets/about-bg.png?v=2") center / cover no-repeat;
+    url("assets/about-bg.png?v=4") center / cover no-repeat;
   background-color: var(--paper-light);
-  padding-top: 60px;
-  padding-bottom: 120px;
+  padding-top: calc(60px * var(--s));
+  padding-bottom: calc(120px * var(--s));
   position: relative;
 }
 
 .about-grid {
   margin: 0 auto;
-  max-width: 1180px;
+  max-width: calc(1180px * var(--s));
 }
 
 .about-grid .copy-block {
-  max-width: 531px;
+  max-width: calc(531px * var(--s));
 }
 
 .about-section .section-title {
@@ -543,19 +558,19 @@ p {
      bleeding off the right). Keep it 1440 wide and centre it beyond 1440 so the card's
      right edge lines up with the other sections' column; the photo/cream stay full-bleed. */
   margin: 0 auto;
-  max-width: 1440px;
+  max-width: calc(1440px * var(--s));
 }
 
 .copy-block {
   display: grid;
-  gap: 32px;
+  gap: calc(32px * var(--s));
 }
 
 .copy-block h3,
 .cta-panel h2 {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: clamp(26px, 2.4vw, 32px);
+  font-size: clamp(26px, 2.4vw, calc(32px * var(--s)));
   font-style: italic;
   font-weight: 400;
   line-height: 1.25;
@@ -564,43 +579,44 @@ p {
 .gerber-card h3 {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 32px;
+  font-size: clamp(23px, 2.3vw, calc(28px * var(--s)));
   font-style: normal;
   font-weight: 700;
-  line-height: 30px;
+  line-height: 1.2;
 }
 
 .copy-block h3 {
-  font-size: 32px;
+  font-size: clamp(23px, 2.3vw, calc(28px * var(--s)));
   font-style: normal;
-  line-height: 30px;
+  line-height: 1.25;
   text-align: center;
 }
 
 .copy-block p {
   color: var(--ink);
-  font-size: 20px;
-  line-height: 30px;
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
+  line-height: 1.6;
 }
 
 .gerber-card p {
   color: var(--ink);
-  font-size: 20px;
-  line-height: 30px;
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
+  line-height: 1.6;
   margin: 0;
 }
 
 .stats {
   display: grid;
-  gap: 16px;
+  gap: calc(16px * var(--s));
   grid-template-columns: repeat(3, 165px);
 }
 
 .stats div {
   align-items: center;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(157, 137, 118, 0.45);
+  background: #ffffff;
+  border: 0;
   border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(71, 38, 11, 0.1);
   display: flex;
   flex-direction: column;
   height: 92px;
@@ -612,7 +628,7 @@ p {
   color: var(--ink);
   display: block;
   font-family: var(--serif);
-  font-size: 24px;
+  font-size: clamp(20px, 1.6vw, calc(23px * var(--s)));
   font-style: normal;
   font-weight: 700;
   line-height: 36px;
@@ -621,7 +637,7 @@ p {
 
 .stats span {
   color: var(--muted);
-  font-size: 14px;
+  font-size: calc(14px * var(--s));
   line-height: 20px;
   opacity: 1;
 }
@@ -648,15 +664,22 @@ p {
        no longer washes over the flowers (client: keep the bouquet clear and defined). */
     /* anchored to centre (= 1080px / 980px at the 1440 reference) so the cream stays behind the
        Cvećara card when the page is wider than 1440 instead of sliding left of it */
-    radial-gradient(820px 620px at calc(50% + 360px) 320px, #fdf7f3 0%, #fdf7f3 34%, rgba(253, 247, 243, 0.72) 48%, rgba(253, 247, 243, 0) 60%),
-    radial-gradient(440px 320px at calc(50% + 260px) 70px, #fdf7f3 0%, rgba(253, 247, 243, 0.5) 46%, rgba(253, 247, 243, 0) 70%),
+    radial-gradient(calc(820px * var(--s)) calc(620px * var(--s)) at calc(50% + 360px * var(--s)) calc(320px * var(--s)), #fdf7f3 0%, #fdf7f3 34%, rgba(253, 247, 243, 0.72) 48%, rgba(253, 247, 243, 0) 60%),
+    radial-gradient(calc(440px * var(--s)) calc(320px * var(--s)) at calc(50% + 260px * var(--s)) calc(70px * var(--s)), #fdf7f3 0%, rgba(253, 247, 243, 0.5) 46%, rgba(253, 247, 243, 0) 70%),
     /* bottom cream fade — bridges into Usluge (mirrors Figma's seam band) */
     linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 16%),
-    /* photo fills the section height (Figma stretches it), bouquet full size, left-anchored */
+    /* photo fills the section height (Figma stretches it) and is FLUSH-LEFT to the viewport edge.
+       The Figma node is full-bleed from x=0 at every breakpoint (Desktop 0..1484 in a 1440 frame,
+       Full HD 0..1920, 4K 0..3840) — the bouquet sits in the image's left portion, the card overlays
+       the image's own cream copy-space on the right. So anchor LEFT, not centre: `center` floated the
+       bouquet inward and opened a cream gap on the left edge (client: "not as per figma").
+       `left` is the keyword 0% form — it CANNOT reproduce the old `calc(50% - 720px)` % gotcha (where a
+       % in background-position is relative to (container - image), which pinned the photo hard-left and
+       washed out a void). At 1440 `auto 100%` resolves to ~1485px wide = the Figma node width exactly. */
     url("assets/cvecara-bg.png") left top / auto 100% no-repeat;
   background-color: #fdf7f3;
   overflow: hidden;
-  padding: 0 0 80px;
+  padding: 0 0 calc(80px * var(--s));
   position: relative;
 }
 
@@ -672,12 +695,12 @@ p {
   height: auto;
   margin: 0;
   max-width: 100%;
-  width: 634px;
+  width: calc(634px * var(--s));
 }
 
 .gerber-card {
   display: grid;
-  gap: 60px;
+  gap: calc(60px * var(--s));
   padding-top: 24px;
 }
 
@@ -687,20 +710,20 @@ p {
   border-radius: 80px 0 0 80px;
   display: flex;
   height: 77px;
-  justify-content: center;
+  justify-content: flex-start;
   margin-left: 16px;
-  padding: 0 24px;
+  padding: 0 48px;
 }
 
 .gerber-body {
   display: grid;
-  gap: 32px;
+  gap: calc(32px * var(--s));
   padding: 0 130px 0 84px;
 }
 
 .check-list {
   display: grid;
-  gap: 16px;
+  gap: calc(16px * var(--s));
   list-style: none;
   margin: 0;
   padding: 0;
@@ -710,9 +733,9 @@ p {
   align-items: center;
   color: var(--ink);
   display: flex;
-  font-size: 20px;
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
   gap: 8px;
-  line-height: 30px;
+  line-height: 1.5;
 }
 
 .check-icon {
@@ -732,7 +755,7 @@ p {
   width: 24px;
 }
 
-.gerber-body .button.secondary {
+.gerber-body .button {
   justify-self: start;
 }
 
@@ -769,7 +792,7 @@ p {
 
 .service-grid {
   display: grid;
-  gap: 32px;
+  gap: calc(32px * var(--s));
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
   max-width: none;
@@ -804,7 +827,7 @@ p {
 .service-card-body {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: calc(20px * var(--s));
   padding: 20px;
 }
 
@@ -817,17 +840,17 @@ p {
 .service-card h3 {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 22px;
+  font-size: clamp(18px, 1.5vw, calc(21px * var(--s)));
   font-style: normal;
   font-weight: 400;
-  line-height: 27.28px;
+  line-height: 1.25;
   margin: 0;
 }
 
 .service-card p {
   color: #6b625a;
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: calc(16px * var(--s));
   font-weight: 400;
   line-height: 24px;
   margin: 0;
@@ -838,7 +861,7 @@ p {
   color: var(--ink);
   display: inline-flex;
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: calc(16px * var(--s));
   font-weight: 600;
   gap: 8px;
   line-height: 21px;
@@ -852,7 +875,7 @@ p {
 
 .info-grid {
   display: grid;
-  gap: 32px;
+  gap: calc(32px * var(--s));
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
   max-width: none;
@@ -876,13 +899,13 @@ p {
   object-fit: contain;
   object-position: left center;
   width: auto;
-  max-width: 130px;
+  max-width: calc(130px * var(--s));
 }
 
 .info-card h3 {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 20px;
+  font-size: calc(20px * var(--s));
   font-style: normal;
   font-weight: 400;
   line-height: 24.8px;
@@ -892,7 +915,7 @@ p {
 .info-card p {
   color: #6b625a;
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: calc(16px * var(--s));
   font-weight: 400;
   line-height: 20px;
   margin: 0;
@@ -903,7 +926,7 @@ p {
   gap: 28px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0 auto;
-  max-width: 1180px;
+  max-width: calc(1180px * var(--s));
 }
 
 .obituary-preview img {
@@ -918,14 +941,14 @@ p {
 .obituary-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: calc(20px * var(--s));
   align-items: center;
   width: 100%;
 }
 
 .obituary-grid > a {
   display: block;
-  width: 767px;
+  width: calc(767px * var(--s));
   max-width: 100%;
   height: 532px;
   border-radius: 20px;
@@ -973,7 +996,7 @@ p {
 .eyebrow {
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: calc(16px * var(--s));
   font-weight: 400;
   letter-spacing: 1.95px;
   line-height: 20px;
@@ -983,37 +1006,37 @@ p {
 .cta-panel h2 {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 40px;
+  font-size: clamp(28px, 3vw, calc(34px * var(--s)));
   font-style: normal;
   font-weight: 400;
   letter-spacing: 2px;
-  line-height: 48px;
+  line-height: 1.2;
 }
 
 .cta-details {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: calc(20px * var(--s));
 }
 
 .cta-sub {
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 18px;
+  font-size: clamp(15px, 1.3vw, calc(17px * var(--s)));
   font-weight: 400;
-  line-height: 30px;
+  line-height: 1.6;
   margin: 0;
 }
 
 .phone-link {
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 44px;
+  font-size: clamp(30px, 3.2vw, calc(38px * var(--s)));
   font-style: normal;
   font-weight: 400;
   letter-spacing: 2px;
-  line-height: 66px;
+  line-height: 1.4;
   text-decoration: none;
 }
 
@@ -1031,7 +1054,7 @@ p {
   color: var(--ink);
   display: inline-flex;
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: calc(16px * var(--s));
   font-weight: 400;
   gap: 8px;
   line-height: 21px;
@@ -1046,6 +1069,7 @@ p {
 
 .cta-button {
   padding: 20px 80px;
+  width: 100%;
 }
 
 .site-footer {
@@ -1066,7 +1090,7 @@ p {
   flex-direction: column;
   height: 100%;
   justify-content: flex-start;
-  gap: 20px;
+  gap: calc(20px * var(--s));
 }
 
 .footer-brand .logo {
@@ -1077,18 +1101,18 @@ p {
 .footer-brand p {
   color: #6b625a;
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: calc(14px * var(--s));
   font-weight: 400;
   line-height: 20px;
   margin: 0;
-  max-width: 248px;
+  max-width: calc(248px * var(--s));
 }
 
 .footer-cta {
   background: var(--gold);
   border: 0;
   filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
-  font: 500 14px/21px var(--sans);
+  font: 500 calc(14px * var(--s))/1.5 var(--sans);
   min-width: 0;
   padding: 10px 40px;
 }
@@ -1096,13 +1120,13 @@ p {
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: calc(16px * var(--s));
 }
 
 .site-footer h3 {
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: calc(14px * var(--s));
   font-weight: 600;
   letter-spacing: 0.325px;
   line-height: 21.45px;
@@ -1124,7 +1148,7 @@ p {
   color: #6b625a;
   display: flex;
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: calc(14px * var(--s));
   font-weight: 400;
   gap: 10px;
   line-height: 20px;
@@ -1154,7 +1178,7 @@ p {
 .footer-links a {
   color: #6b625a;
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: calc(14px * var(--s));
   font-weight: 400;
   line-height: 20px;
   text-decoration: underline;
@@ -1168,7 +1192,7 @@ p {
   color: #91867d;
   display: flex;
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: calc(16px * var(--s));
   font-weight: 400;
   justify-content: space-between;
   line-height: 26.4px;
@@ -1185,8 +1209,8 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 60px;
-  padding: 60px max(var(--gutter), calc((100% - var(--content-max)) / 2)) 80px;
+  gap: clamp(24px, 3.5vh, 44px);
+  padding: clamp(40px, 5vh, 60px) max(var(--gutter), calc((100% - var(--content-max)) / 2)) clamp(48px, 6vh, 80px);
   position: relative;
 }
 
@@ -1198,7 +1222,7 @@ p {
   display: grid;
   gap: 30px;
   margin: 0 auto;
-  max-width: 1180px;
+  max-width: calc(1180px * var(--s));
   width: 100%;
 }
 
@@ -1237,7 +1261,7 @@ p {
   color: var(--ink);
   cursor: pointer;
   display: inline-flex;
-  font: 600 16px/24px var(--sans);
+  font: 600 calc(16px * var(--s))/1.5 var(--sans);
   height: 48px;
   justify-content: center;
   min-width: 132px;
@@ -1260,7 +1284,7 @@ p {
   border: 1px solid #d5bba2;
   border-radius: 30px;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
-  height: 574px;
+  height: clamp(320px, 58svh, 574px);
   overflow: hidden;
   position: relative;
 }
@@ -1268,8 +1292,8 @@ p {
 .gallery-main img {
   display: block;
   height: 100%;
-  object-fit: contain;
-  padding: 24px;
+  object-fit: cover;
+  padding: 0;
   width: 100%;
 }
 
@@ -1282,7 +1306,7 @@ p {
   background: #9d8976;
   border-radius: 12px;
   color: white;
-  font: 500 20px/30px var(--sans);
+  font: 500 calc(20px * var(--s))/1.5 var(--sans);
   left: 19px;
   padding: 9px 12px;
   position: absolute;
@@ -1323,7 +1347,7 @@ p {
 
 .thumb-strip {
   display: grid;
-  gap: 20px;
+  gap: calc(20px * var(--s));
   grid-template-columns: repeat(5, minmax(0, 1fr));
   padding: 10px;
 }
@@ -1334,7 +1358,7 @@ p {
   border-radius: 20px;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
   cursor: pointer;
-  height: 200px;
+  height: clamp(110px, 15svh, 170px);
   overflow: hidden;
   padding: 0;
   transition: transform 0.15s ease;
@@ -1370,40 +1394,43 @@ p {
   border-radius: 20px;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
   display: grid;
-  grid-template-columns: 394px minmax(0, 1fr);
-  height: 528px;
+  grid-template-columns: minmax(300px, 394px) minmax(0, 1fr);
+  min-height: calc(520px * var(--s));
   max-width: 100%;
   overflow: hidden;
-  width: 952px;
+  width: calc(952px * var(--s));
 }
 
 .contact-info {
-  /* Figma veils this panel with stacked white blur-360 ellipses over the photo (not a
-     cream wash): mostly white, cleaner at the top (info), faint floral toward the base. */
+  /* Figma puts a soft floral photo on the left of the card that dissolves into the white
+     form on the right. We veil the contact hero photo (white roses) heavily so the info text
+     stays legible — cleaner over the top (info), a touch more photo toward the base — then
+     fade it into the form's white via the right-edge gradient (.contact-info::after). */
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.72) 100%),
-    #f1e7e2 url("assets/contact-side-fade.png") center / cover no-repeat;
+    linear-gradient(180deg, rgba(253, 247, 243, 0.93) 0%, rgba(253, 247, 243, 0.9) 55%, rgba(253, 247, 243, 0.84) 100%),
+    #f1e7e2 url("assets/hero-contact.png") left bottom / cover no-repeat;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 24px;
+  gap: 24px;
+  padding: clamp(28px, 2.6vw, 40px);
   position: relative;
 }
 
 .contact-info::after {
-  background: linear-gradient(to right, transparent, white);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 92%);
   content: "";
   height: 100%;
   pointer-events: none;
   position: absolute;
   right: -1px;
   top: 0;
-  width: 96px;
+  width: 128px;
 }
 
 .contact-info h2 {
   color: var(--ink);
-  font: 700 16px/21.45px var(--sans);
+  font: 700 calc(16px * var(--s))/1.340625 var(--sans);
   letter-spacing: 0.325px;
   margin: 0 0 32px;
   text-transform: uppercase;
@@ -1422,7 +1449,7 @@ p {
   align-items: center;
   color: var(--muted);
   display: flex;
-  font: 500 16px/20px var(--sans);
+  font: 500 calc(16px * var(--s))/1.25 var(--sans);
   gap: 10px;
 }
 
@@ -1443,10 +1470,10 @@ p {
 }
 
 .contact-podaci {
-  color: var(--muted);
+  color: var(--ink);
   display: flex;
   flex-direction: column;
-  font: 500 16px/20px var(--sans);
+  font: 500 calc(16px * var(--s))/1.25 var(--sans);
   gap: 14px;
   position: relative;
   z-index: 1;
@@ -1464,21 +1491,22 @@ p {
 .contact-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 23px 25px 23px 31px;
+  gap: clamp(16px, 1.6vw, 22px);
+  justify-content: center;
+  padding: clamp(28px, 2.8vw, 44px);
 }
 
 .contact-form .input-fields {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: clamp(12px, 1.2vw, 16px);
 }
 
 .contact-form label {
   color: var(--muted);
   display: flex;
   flex-direction: column;
-  font: 400 14px/21px var(--sans);
+  font: 400 calc(14px * var(--s))/1.5 var(--sans);
   gap: 8px;
 }
 
@@ -1489,7 +1517,7 @@ p {
   border-radius: 8px;
   box-sizing: border-box;
   color: var(--ink);
-  font: 400 14px/21px var(--sans);
+  font: 400 calc(14px * var(--s))/1.5 var(--sans);
   padding: 8px 12px;
 }
 
@@ -1509,7 +1537,7 @@ p {
   color: var(--ink);
   cursor: pointer;
   filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
-  font: 500 14px/21px var(--sans);
+  font: 500 calc(14px * var(--s))/1.5 var(--sans);
   padding: 10px 40px;
   transition: filter 0.15s ease;
   width: 100%;
@@ -1534,10 +1562,10 @@ p {
 
 .obituary-intro {
   color: var(--muted);
-  font-size: 20px;
+  font-size: calc(20px * var(--s));
   line-height: 1.5;
   margin: 0 auto 42px;
-  max-width: 760px;
+  max-width: calc(760px * var(--s));
   text-align: center;
 }
 
@@ -1565,7 +1593,7 @@ p {
   border: 0;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 28px;
+  font-size: calc(28px * var(--s));
   height: 44px;
   position: absolute;
   right: 24px;
@@ -1941,3 +1969,19 @@ p {
     padding: 26px 20px;
   }
 }
+
+/* ============================================================================
+   LARGE-SCREEN SCALE-UP  (Full HD -> 4K)
+   The 1440 design is centred & fixed from 1280 through 1920 (matches the Figma
+   Desktop / Laptop / Full HD frames). Above ~2100px the whole design scales up
+   via --s toward 1.5x at 3840 (the Figma "Desktop 4K" frame). Pure CSS: every
+   scalable px is calc(... * var(--s)); --s is 1 below 2100px so nothing here
+   touches the existing breakpoints. Steps are tuned to common monitor widths
+   (QHD 2560, ultrawide 3440, 4K 3840) so each fixed display gets one clean scale. */
+@media (min-width: 2100px) { :root { --s: 1.08; } }
+@media (min-width: 2300px) { :root { --s: 1.16; } }
+@media (min-width: 2560px) { :root { --s: 1.24; } }
+@media (min-width: 2800px) { :root { --s: 1.31; } }
+@media (min-width: 3100px) { :root { --s: 1.38; } }
+@media (min-width: 3440px) { :root { --s: 1.44; } }
+@media (min-width: 3840px) { :root { --s: 1.50; } }
