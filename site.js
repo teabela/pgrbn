@@ -9,6 +9,54 @@ if (navToggle && mainNav) {
   });
 }
 
+// --- Lightbox (shared, created on first use so gallery pages need no extra markup) ---
+let lightboxRef = null;
+const getLightbox = () => {
+  if (lightboxRef) return lightboxRef;
+  let el = document.querySelector(".lightbox");
+  if (!el) {
+    el = document.createElement("div");
+    el.className = "lightbox";
+    el.hidden = true;
+    el.innerHTML = '<button type="button" data-lightbox-close aria-label="Zatvori">×</button><img alt="">';
+    document.body.appendChild(el);
+  }
+  const image = el.querySelector("img");
+  const closeButton = el.querySelector("[data-lightbox-close]");
+  const close = () => {
+    el.hidden = true;
+    image.removeAttribute("src");
+    document.body.classList.remove("no-scroll");
+  };
+  closeButton.addEventListener("click", close);
+  el.addEventListener("click", (event) => {
+    if (event.target === el) close();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !el.hidden) close();
+  });
+  lightboxRef = { el, image, closeButton };
+  return lightboxRef;
+};
+const openLightbox = (src, alt) => {
+  const { el, image, closeButton } = getLightbox();
+  image.src = src;
+  image.alt = alt || "";
+  el.hidden = false;
+  document.body.classList.add("no-scroll");
+  closeButton.focus();
+};
+
+// Explicit lightbox triggers (e.g. obituary thumbnails).
+document.querySelectorAll("[data-lightbox]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    openLightbox(link.href, link.querySelector("img")?.alt);
+  });
+});
+
+const phoneGallery = window.matchMedia("(max-width: 767px)");
+
 document.querySelectorAll(".gallery-module").forEach((gallery) => {
   const mainImage = gallery.querySelector(".gallery-main img");
   const label = gallery.querySelector(".image-label");
@@ -41,6 +89,12 @@ document.querySelectorAll(".gallery-module").forEach((gallery) => {
 
   items.forEach((item, itemIndex) => {
     item.addEventListener("click", () => {
+      // On phones the gallery is a thumbnail grid (no slider main image), so a tap
+      // enlarges the image in the lightbox; on desktop it drives the main viewer.
+      if (phoneGallery.matches) {
+        openLightbox(item.dataset.src, item.dataset.alt);
+        return;
+      }
       visible = items.filter((candidate) => !candidate.hidden);
       show(visible.indexOf(item) >= 0 ? visible.indexOf(item) : itemIndex);
     });
@@ -50,35 +104,6 @@ document.querySelectorAll(".gallery-module").forEach((gallery) => {
   next?.addEventListener("click", () => show(index + 1));
   show(0);
 });
-
-const lightbox = document.querySelector(".lightbox");
-if (lightbox) {
-  const lightboxImage = lightbox.querySelector("img");
-  const closeButton = lightbox.querySelector("[data-lightbox-close]");
-
-  document.querySelectorAll("[data-lightbox]").forEach((link) => {
-    link.addEventListener("click", (event) => {
-      event.preventDefault();
-      lightboxImage.src = link.href;
-      lightboxImage.alt = link.querySelector("img")?.alt || "";
-      lightbox.hidden = false;
-      closeButton.focus();
-    });
-  });
-
-  const close = () => {
-    lightbox.hidden = true;
-    lightboxImage.removeAttribute("src");
-  };
-
-  closeButton.addEventListener("click", close);
-  lightbox.addEventListener("click", (event) => {
-    if (event.target === lightbox) close();
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !lightbox.hidden) close();
-  });
-}
 
 document.querySelectorAll("form.js-contact-form").forEach((form) => {
   const status = form.querySelector(".form-status");

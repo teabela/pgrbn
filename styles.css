@@ -1811,37 +1811,173 @@ p {
 }
 
 /* ---- PHONE tier (<=767, inferred — stack the tablet's multi-col rows) ----- */
+/* ============================================================================
+   MOBILE  (<=767, reference = Figma "Mobile" 390 frame; canonical frame 232:1854)
+   Single-column reflow that reproduces the authored Mobile-390 layout: short
+   text hero, 24px section titles / 14px body, stats 3-up, Naše usluge as a list
+   of horizontal image-left rows, kontakt as a white card on the photo, footer
+   as two stacked contact blocks. Cvećara section + Brzi linkovi footer column
+   are hidden (Figma omits them on mobile — user-confirmed; reversible). The
+   <=640 block below only carries gallery + a couple of width tweaks so it never
+   overrides this tier at the 390 test width. */
 @media (max-width: 767px) {
+  /* --- Header / logo (hamburger nav already wired in the <=1024 tier). Override the
+         base 130px gutter padding, which would crush the header on a phone. --- */
+  .site-header { height: auto; min-height: 60px; padding: 10px 16px; }
+  .logo span { font-size: 34px; height: 31px; line-height: 31px; }
+  .logo small { font-size: 7px; }
+
+  /* The scroll cue would crowd the short mobile hero, and scrolling is obvious on a
+     phone — hide it across the whole phone range. */
+  .scroll-cue { display: none; }
+  .section-title span { width: 68px; }
+
+  /* --- HERO: short, centred text; order title -> buttons -> ornament -> subtitle
+         (set in the tablet tier). Buttons stack full-width. --- */
   .hero,
   .page-hero {
-    min-height: 480px;
-    padding-top: 88px;
+    min-height: 372px;
+    padding: 96px 30px 36px;
+    justify-content: center;
+  }
+  /* Subpage heroes are shorter in the Figma mobile frames (~239px) — just the title,
+     ornament and a short subtitle over the photo. */
+  .page-hero { min-height: 240px; padding-top: 80px; }
+  .hero h1,
+  .page-hero h1 { font-size: 24px; line-height: 32px; max-width: 320px; }
+  .hero p,
+  .page-hero p { font-size: 12px; line-height: 18px; }
+  .ornament { width: 240px; height: 12px; }
+  .hero-copy,
+  .page-hero-copy { gap: 14px; }
+  .hero .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    width: 100%;
+  }
+  .hero .hero-actions .button {
+    font-size: 12px;
+    padding: 9px 24px;
+    width: 100%;
+    max-width: 241px;
   }
 
-  /* Cvećara -> single column: the bouquet photo block (gerber-image) stacks on top,
-     the card (heading, checklist, button) below it on cream. Section stays solid cream
-     (inherited from the tablet tier); the old top-strip section background is gone. */
-  .gerber-grid {
-    grid-template-columns: 1fr;
-  }
+  /* --- Sections: tighter mobile rhythm + 24px titles --- */
+  .section { padding: 36px 16px; }
+  .section-title { margin-bottom: 24px; }
+  .section-title h2,
+  .about-section .section-title h2 { font-size: 24px; line-height: 1.3; }
 
-  .gerber-image {
-    min-height: 220px;
+  /* --- O NAMA --- */
+  .about-grid,
+  .intro-strip,
+  .obituary-preview-grid { grid-template-columns: 1fr; }
+  .copy-block { gap: 20px; }
+  .copy-block h3 { font-size: 20px; line-height: 1.3; }
+  .copy-block p { font-size: 14px; line-height: 22px; }
+  /* Stats stay 3-up (Figma 3x113), plain centred text — no white card on mobile. */
+  .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stats div {
+    background: transparent;
+    box-shadow: none;
+    height: auto;
+    padding: 4px 0;
   }
+  .stats strong { font-size: 16px; line-height: 22px; margin-bottom: 2px; }
+  .stats span { font-size: 10px; line-height: 14px; }
+  .about-cta { width: 100%; justify-self: stretch; }
 
-  .gerber-body {
-    padding: 0 20px;
+  /* --- CVEĆARA section — Figma omits it on mobile (user-confirmed). Hidden here
+         only; desktop/tablet keep it, and the markup is untouched (reversible). --- */
+  .gerber-section { display: none; }
+
+  /* --- NAŠE USLUGE — Figma reflows the cards into a single list of horizontal
+         rows: a square image on the left, heading + paragraph on the right; the
+         three service rows keep their CTA link, the three info rows don't. --- */
+  /* The section is a flex column with an 80px desktop gap; tighten it so the service
+     rows and info rows read as one continuous list. */
+  .services-section { background: var(--paper); gap: 16px; }
+  .services-section .section-title { margin-bottom: 8px; }
+  .service-grid,
+  .info-grid { grid-template-columns: 1fr; gap: 16px; }
+  /* drop the tablet featured-span / 2-up reorder back to plain stacking */
+  .service-grid .service-card:first-child { grid-column: auto; }
+  .service-grid .service-card:nth-child(2),
+  .service-grid .service-card:nth-child(3) { order: 0; }
+
+  .service-card {
+    align-items: flex-start;
+    border-color: rgba(213, 187, 162, 0.55);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(71, 38, 11, 0.08);
+    flex-direction: row;
+    gap: 16px;
+    padding: 16px;
   }
-
-  /* Kontakt card stacks on phones: info panel on top, form below, fade goes to the bottom. */
-  .contact-card {
-    grid-template-columns: 1fr;
+  .service-card-image {
+    background: var(--paper);
+    border-radius: 12px;
+    flex: 0 0 92px;
+    height: 92px;
+    width: 92px;
   }
-
-  .contact-info {
-    min-height: 260px;
+  /* Info card has no text wrapper (img + h3 + p are direct children), so use a grid:
+     image spans the left column, heading + paragraph stack in the right column. */
+  .info-card {
+    align-items: start;
+    border-color: rgba(213, 187, 162, 0.55);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(71, 38, 11, 0.08);
+    column-gap: 16px;
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    min-height: 0;
+    padding: 16px;
+    row-gap: 6px;
   }
+  .info-card img {
+    background: var(--paper);
+    border-radius: 12px;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    height: 92px;
+    max-width: none;
+    object-fit: contain;
+    object-position: center;
+    padding: 16px;
+    width: 92px;
+  }
+  .info-card h3 { grid-column: 2; grid-row: 1; }
+  .info-card p { grid-column: 2; grid-row: 2; }
+  .service-card-body { flex: 1 1 auto; gap: 10px; min-width: 0; padding: 0; }
+  .service-card-text { gap: 6px; }
+  .service-card h3,
+  .info-card h3 { font-size: 18px; line-height: 1.25; }
+  .service-card p,
+  .info-card p { font-size: 14px; line-height: 20px; }
+  .service-card-cta { font-size: 14px; }
 
+  /* --- KONTAKT — white frosted card on the photo (cta-panel already styled); mobile sizing. --- */
+  .cta-section { padding: 36px 16px; }
+  .cta-panel { gap: 22px; padding: 28px 20px; border-radius: 20px; }
+  .eyebrow { font-size: 14px; letter-spacing: 1.2px; }
+  .cta-panel h2 { font-size: 24px; line-height: 1.2; }
+  .cta-details { gap: 16px; }
+  .cta-sub { font-size: 14px; }
+  .phone-link { font-size: 24px; line-height: 1.3; }
+  .contact-details { flex-direction: column; gap: 10px; }
+  .contact-detail { font-size: 14px; }
+  .cta-button { width: 100%; }
+
+  /* --- KONTAKT page contact card stacks (info panel on top, form below). --- */
+  .contact-layout { padding: 36px 16px; }
+  .contact-card { grid-template-columns: 1fr; }
+  .contact-info { min-height: 260px; }
+  .contact-info,
+  .contact-form { padding: 26px 20px; }
   .contact-info::after {
     background: linear-gradient(to bottom, transparent, white);
     bottom: -1px;
@@ -1851,123 +1987,48 @@ p {
     width: 100%;
   }
 
-  /* Service + info cards -> single column. */
-  .service-grid,
-  .info-grid {
-    grid-template-columns: 1fr;
+  /* --- GALLERIES (oprema / cvecara / prevoz / galerija) — Figma mobile shows a 3-col
+         thumbnail grid, not the desktop slider. Hide the main viewer + prev/next, and lay
+         the thumbnails out as a square grid; tapping a thumb opens the lightbox (site.js). --- */
+  .gallery-main { display: none; }
+  .gallery-slider { display: block; }
+  .round-arrow { display: none; }
+  .thumb-strip {
+    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0;
   }
-
-  .service-grid .service-card:first-child {
-    grid-column: auto;
+  .thumb-strip button {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(71, 38, 11, 0.1);
+    height: auto;
   }
+  .thumb-strip img { object-fit: cover; }
 
-  /* Footer -> single column (brand stays hidden, inherited from the tablet tier). */
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* Reset the tablet 2-up reorder so the single column stacks in DOM order. */
-  .service-grid .service-card { order: 0; }
-
-  /* Stats -> single column. */
-  .stats {
-    grid-template-columns: 1fr;
+  /* --- FOOTER — Figma: two contact blocks stacked + copyright. Brand block and
+         the Brzi linkovi column are dropped on mobile. --- */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; padding: 40px 0; }
+  .footer-brand { display: none; }
+  .footer-col:has(.footer-links) { display: none; }
+  .site-footer h3 { font-size: 13px; }
+  .footer-contact li,
+  .footer-contact a { font-size: 12px; }
+  /* Copyright + registration stack on their own lines (Figma), not the desktop row. */
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 12px;
+    gap: 8px;
+    text-align: left;
   }
 }
 
 @media (max-width: 640px) {
-  .site-header {
-    padding: 14px 20px;
-  }
-
-  .logo span {
-    font-size: 44px;
-  }
-
-  .hero,
-  .page-hero {
-    min-height: 440px;
-    padding: 64px 20px;
-  }
-
-  .hero h1,
-  .page-hero h1 {
-    font-size: 38px;
-  }
-
-  .hero-actions,
-  .cta-actions,
-  .stats,
-  .contact-details,
-  .footer-bottom {
-    flex-direction: column;
-  }
-
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
-  .section,
-  .contact-layout,
-  .cta-section {
-    padding: 56px 20px;
-  }
-
-  .site-footer {
-    padding-inline: 20px;
-  }
-
-  /* The scroll cue is a desktop/tablet affordance; the short mobile hero leaves no room for
-     it without crowding the buttons, and scrolling is obvious on a phone — so hide it here. */
-  .scroll-cue {
-    display: none;
-  }
-
-  .section-title span {
-    width: 68px;
-  }
-
-  .copy-block h3,
-  .gerber-card h3,
-  .cta-panel h2 {
-    font-size: 30px;
-  }
-
-  .gallery-main {
-    height: 360px;
-  }
-
-  .gallery-page {
-    padding: 40px 20px 60px;
-  }
-
-  .gallery-slider {
-    grid-template-columns: 42px minmax(0, 1fr) 42px;
-    gap: 12px;
-  }
-
-  .thumb-strip {
-    grid-auto-columns: 160px;
-    grid-auto-flow: column;
-    grid-template-columns: none;
-    overflow-x: auto;
-  }
-
-  .thumb-strip button {
-    height: 130px;
-    width: 160px;
-  }
-
-  .round-arrow {
-    height: 42px;
-    width: 42px;
-  }
-
-  .cta-panel,
-  .contact-info,
-  .contact-form {
-    padding: 26px 20px;
-  }
+  /* The full mobile design — including the gallery thumbnail grid — lives in the <=767 tier
+     above. This block only carries a couple of width tweaks so it never re-overrides it. */
+  .site-footer { padding-inline: 20px; }
+  .gallery-page { padding: 40px 20px 60px; }
 }
 
 /* ============================================================================
