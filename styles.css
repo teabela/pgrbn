@@ -1,0 +1,2820 @@
+:root {
+  --paper: #f1e7e2;
+  --paper-light: #fdf7f3;
+  --surface: #ffffff;
+  --ink: #47260b;
+  --muted: #6b625a;
+  --line: #9d8976;
+  --gold: #d5bba2;
+  --shadow: 0 10px 28px rgba(71, 38, 11, 0.16);
+  --serif: "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Montserrat", Arial, sans-serif;
+  /* Centered content column. Content sits in a 1180px-wide column (130px gutters) at the 1440
+     reference. The head script now scales the whole 1440 layout UNIFORMLY to every viewport width,
+     so the page is always laid out at 1440 CSS px — the column, gutters, full-bleed backgrounds
+     and dividers all hold their 1440 proportions and just scale together. The reusable gutter
+     below therefore always resolves to --gutter (130px); it stays only as a harmless safety net
+     (and for the <980 responsive range where the zoom is off). */
+  --content-max: calc(1180px * var(--s));
+  --gutter: calc(130px * var(--s));
+  --header-height: calc(88px * var(--s));
+  /* Large-screen scale factor. Stays 1 through 1920 (Full HD = the 1440 design centred,
+     exactly per Figma), then steps up toward 1.5x by 3840 to match the Figma "Desktop 4K"
+     frame (title 464->691, body 16->24). Real CSS only — no transform/zoom. Ladder at EOF.
+     Every scalable px value is wrapped calc(... * var(--s)); since --s is 1 below 2100px the
+     wraps are a no-op at all existing breakpoints (incl. the <1024 tablet/phone tiers). */
+  --s: 1;
+  /* Gallery slider: how many thumbnails are visible at once. A FIXED thumbnail width (--thumb-w) plus
+     this count keeps every thumbnail box the same size at all widths — only the count drops as the
+     screen narrows (overridden per breakpoint further down), so thumbnails are never squeezed. */
+  --thumb-n: 5;
+}
+
+/* Reusable side gutter for full-bleed sections; resolves to --gutter (130px) under the uniform
+   1440 layout, and only differs in the <980 responsive range where the zoom is off. */
+
+/* "Balan" wordmark font. Only Windows ships Edwardian Script ITC — Android/iOS would fall back
+   to an arbitrary cursive, rendering the logo differently per OS. This embedded subset (latin
+   letters/digits only, ~16KB, built from the local ITCEDSCR.TTF) makes the logo identical
+   everywhere, as in Figma. Declared families win over same-named system fonts, so every OS —
+   including Windows — renders from this file. block (not swap) so the wordmark never flashes
+   in a fallback face; each page also preloads the file so the wait is negligible. */
+@font-face {
+  font-family: "Edwardian Script ITC";
+  font-display: block;
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/edwardian-script-subset.woff2") format("woff2");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Always reserve the vertical scrollbar so EVERY page is laid out at the same width. Otherwise a
+     tall page (e.g. the homepage's full-screen hero) shows a scrollbar while a short page doesn't,
+     and the ~17px width difference flips the min-width `--s` ladder a step — making the nav (and all
+     scaled type) render a touch smaller on the scrolling page. scrollbar-gutter keeps it clean on
+     modern browsers; overflow-y is the universal fallback. */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  /* Keep anchored sections clear of the sticky header so their titles don't land hidden
+     behind it — applies to the scroll cue and the #about / #services nav links alike.
+     In px, so it tracks the 88px header across zoom levels. */
+  scroll-padding-top: calc(96px * var(--s));
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.site-header {
+  align-items: center;
+  background: #fdf7f3;
+  box-shadow: 0 2px 12px 1px rgba(71, 38, 11, 0.25);
+  display: grid;
+  /* Symmetric side columns (logo | nav | spacer) so the nav centres on the PAGE, not in an
+     off-centre middle column — matches Figma, which page-centres the nav. The right 220px is
+     empty on desktop (the nav-toggle is hidden here); it only balances the logo column. */
+  grid-template-columns: calc(220px * var(--s)) 1fr calc(220px * var(--s));
+  height: var(--header-height);
+  padding: 0 max(var(--gutter), calc((100% - var(--content-max)) / 2));
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.logo {
+  align-items: flex-start;
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1;
+  text-align: left;
+  text-decoration: none;
+  width: max-content;
+}
+
+.logo span {
+  font-family: "Edwardian Script ITC", "Brush Script MT", cursive;
+  font-size: calc(48px * var(--s));
+  height: calc(44px * var(--s));
+  line-height: calc(44px * var(--s));
+}
+
+.logo small {
+  font-size: calc(8px * var(--s));
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.main-nav {
+  align-items: center;
+  column-gap: calc(24px * var(--s));
+  display: flex;
+  justify-content: center;
+  row-gap: 1px;
+}
+
+.main-nav a,
+.services-menu > button {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  cursor: pointer;
+  font: 400 calc(16px * var(--s))/1 var(--sans);
+  padding: 0;
+  text-decoration: none;
+  white-space: nowrap; /* a nav label ("O nama") must never break into two lines */
+}
+
+.main-nav a.active,
+.services-menu > button.active {
+  font-weight: 600;
+}
+
+/* The current page's own label (a top-level link, or the Usluge trigger on a service page) keeps the
+   gold underline shown permanently — it marks the selected page. It's already bold, so hover adds
+   nothing. (When the Usluge dropdown is open, the [aria-expanded] rule below still hides it.) */
+.main-nav > a.active::after,
+.services-menu > button.active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Hover/focus: bold the label. The text stays put and the | dividers never move because each item
+   reserves its bold width up front (see lockNavWidths in site.js); text-align:center lets the label
+   thicken symmetrically inside that reserved box. The logo is not a .main-nav item, so it's left
+   untouched. NOTE: scope to `.main-nav > a` (direct children) so the dropdown links — which are also
+   `.main-nav a` descendants — are excluded; they only bold (see below). */
+.main-nav > a,
+.services-menu > button {
+  position: relative;
+  text-align: center;
+}
+
+.main-nav > a:hover,
+.main-nav > a:focus-visible,
+.services-menu > button:hover,
+.services-menu > button:focus-visible {
+  font-weight: 600;
+}
+
+/* A soft gold underline grows out from the centre on hover — only the line animates. Applies to the
+   top-level links AND the Usluge trigger, but NOT the dropdown items. */
+.main-nav > a::after,
+.services-menu > button::after {
+  background: var(--gold);
+  border-radius: 2px;
+  bottom: calc(-6px * var(--s));
+  content: "";
+  height: 2px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  transform: scaleX(0);
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.main-nav > a:hover::after,
+.main-nav > a:focus-visible::after,
+.services-menu > button:hover::after,
+.services-menu > button:focus-visible::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* While the dropdown is open, drop the underline on the Usluge trigger — the flipped chevron already
+   signals the state. (After the :hover rule so it wins at equal specificity when also hovered.) */
+.services-menu > button[aria-expanded="true"]::after {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+/* Dropdown entries just bold on hover/focus — no underline. */
+.dropdown a:hover,
+.dropdown a:focus-visible {
+  font-weight: 600;
+}
+
+.services-menu > button {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.chevron {
+  height: 24px;
+  width: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 180ms ease;
+}
+
+.nav-divider {
+  background: var(--line);
+  border-radius: 999px;
+  height: 17px;
+  width: 1px;
+}
+
+.services-menu {
+  position: relative;
+}
+
+.dropdown {
+  background: #f3e7e2;
+  border-radius: 12px;
+  box-shadow: 0 0 12px 0 rgba(71, 38, 11, 0.35);
+  display: grid;
+  gap: calc(20px * var(--s));
+  left: 50%;
+  min-width: 168px;
+  opacity: 0;
+  padding: 20px;
+  pointer-events: none;
+  position: absolute;
+  top: 44px;
+  transform: translate(-50%, -6px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.dropdown a {
+  color: var(--ink);
+  font: 400 calc(16px * var(--s))/1 var(--sans);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Opens on CLICK now: JS toggles the button's aria-expanded (see site.js), not on hover. */
+.services-menu > button[aria-expanded="true"] + .dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.services-menu > button[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.nav-toggle {
+  align-items: center;
+  background: var(--gold);
+  border: 0;
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  display: none;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.nav-toggle span,
+.nav-toggle span::before,
+.nav-toggle span::after {
+  background: currentColor;
+  border-radius: 2px;
+  content: "";
+  display: block;
+  height: 2px;
+  position: relative;
+  transition: transform 0.3s ease, top 0.3s ease, background-color 0.2s ease;
+  width: 18px;
+}
+
+.nav-toggle span::before {
+  position: absolute;
+  top: -6px;
+}
+
+.nav-toggle span::after {
+  position: absolute;
+  top: 6px;
+}
+
+/* Animate the hamburger into an X while the drawer is open (top/bottom bars rotate, middle fades). */
+.nav-toggle[aria-expanded="true"] span {
+  background-color: transparent;
+}
+.nav-toggle[aria-expanded="true"] span::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] span::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+/* The mobile/tablet slide-in drawer's close (X) button and dimming scrim are injected by site.js
+   and only used at <=1023.98px (styled in that media query); hidden on desktop. */
+.nav-close,
+.nav-scrim {
+  display: none;
+}
+
+.hero,
+.page-hero {
+  background: var(--hero-image) center / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  /* Fill the viewport so the "scroll down" cue (pinned to the hero's bottom) is always in view.
+     Because the photo is taller-subject-at-the-bottom and the viewport box is wider in aspect than
+     the 3:2 image, `cover` must crop somewhere — each hero anchors its background (below) so the
+     crop falls on the empty area, never on the subject (e.g. oprema anchors bottom to keep the
+     coffin; see its inline background-position). */
+  min-height: max(560px, calc(100svh - var(--header-height)));
+  padding: 150px 24px 0;
+  position: relative;
+  text-align: center;
+}
+
+.hero {
+  --hero-image: url("assets/hero.webp?v=2");
+  min-height: max(560px, calc(100svh - var(--header-height)));
+  /* Crisp boundary (per client / Figma): the hero keeps a clearly-defined edge against
+     O nama below — no cream blend. (The 9px gold bottom divider was removed per client.) */
+  background: var(--hero-image) center / cover no-repeat;
+}
+
+/* The hero fills the viewport, which is almost always WIDER in aspect than the 3:2 photos, so
+   `cover` must crop vertically. `center` is the default — it crops the empty margins evenly and
+   keeps the subject for the centred scenes (cvecara arrangement, prevoz van, the veil flat-lays).
+   Photos whose subject sits low add `--low` (below) to shift the crop down instead. */
+.page-hero {
+  background-position: center;
+}
+
+/* Bottom-weighted photos (oprema's coffin, umrlice's foreground flowers) sit in the lower third,
+   so anchor the crop low to keep the whole subject in frame at every screen size while the title
+   still clears it above. Verified 1366→3440 wide and tablet/mobile. */
+.page-hero--low {
+  background-position: center 70%;
+}
+
+/* Galerija & Contact heroes: Figma floods the centre with a large blurred white
+   glow so the scene reads as a soft, dreamy backdrop behind the title. */
+.page-hero--veil {
+  /* Figma floods the centre with THREE white blur-360 ellipses (one centre ≈50%/33%,
+     two flanking ≈30% & 70%) for a wide, soft, dreamy glow behind the title. */
+  background:
+    radial-gradient(58% 60% at 50% 33%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.42) 48%, rgba(255, 255, 255, 0) 80%),
+    radial-gradient(42% 42% at 30% 31%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 76%),
+    radial-gradient(42% 42% at 70% 31%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 76%),
+    var(--hero-image) center / cover no-repeat;
+}
+
+/* The head-script zoom now scales the whole 1440 design uniformly at every width (no 1x cap), so
+   the hero keeps its fixed 775px box and simply scales with everything else — no special >1440
+   height handling needed (the old min-width:1441 clamp that fought the cap is gone). */
+
+/* "Scroll down" cue — a subtle, slowly-bobbing chevron pinned to the bottom-centre of every
+   hero, inviting the visitor to continue. Click scrolls to the next section (see site.js). */
+.scroll-cue {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  bottom: 28px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  left: 50%;
+  opacity: 0.72;
+  padding: 6px 10px;
+  position: absolute;
+  transform: translateX(-50%);
+  transition: opacity 0.2s ease;
+  z-index: 4;
+}
+
+.scroll-cue:hover,
+.scroll-cue:focus-visible {
+  opacity: 1;
+}
+
+.scroll-cue-text {
+  font: 500 calc(12px * var(--s))/1 var(--sans);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.scroll-cue-icon {
+  animation: scroll-cue-bob 2.4s ease-in-out infinite;
+  height: 22px;
+  width: 22px;
+}
+
+@keyframes scroll-cue-bob {
+  0%, 100% { opacity: 0.55; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-icon {
+    animation: none;
+  }
+}
+
+.hero-copy,
+.page-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(20px * var(--s));
+  max-width: calc(980px * var(--s));
+}
+
+.hero h1,
+.page-hero h1 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.4vw, calc(42px * var(--s)));
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 0 auto;
+  max-width: calc(520px * var(--s));
+}
+
+/* Homepage hero tagline: single line on laptop/desktop, forced two-line wrap
+   (after "u") on tablet/mobile — the break is re-enabled in the ≤1023.98px query. */
+.hero-br { display: none; }
+
+.ornament {
+  display: block;
+  height: calc(25px * var(--s));
+  margin: 0;
+  object-fit: cover;
+  width: calc(500px * var(--s));
+  max-width: 100%;
+}
+
+.hero p,
+.page-hero p {
+  color: var(--ink);
+  font-size: clamp(15px, 1.35vw, calc(18px * var(--s)));
+  font-weight: 500;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(32px * var(--s));
+  justify-content: center;
+  margin-top: calc(35px * var(--s));
+}
+
+/* Hero CTAs are wider than the default .button (per client): matched to the rendered width of
+   the "Pogledajte ponudu" button (241px at the 1440 reference). Mobile's full-width override
+   (width:100%) still wins below 768 — this only lifts the floor. (Three-class selectors so this
+   beats .button.primary's own 175px min-width at equal cascade position.) */
+.hero-actions .button.primary,
+.hero-actions .button.secondary {
+  min-width: calc(241px * var(--s));
+}
+
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(20px * var(--s));
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.button {
+  align-items: center;
+  border-radius: 999px;
+  color: var(--ink);
+  display: inline-flex;
+  font: 600 calc(16px * var(--s))/1.5 var(--sans);
+  justify-content: center;
+  padding: calc(12px * var(--s)) calc(24px * var(--s));
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.button.primary {
+  background: var(--gold);
+  border: 0;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+  min-width: calc(175px * var(--s));
+}
+
+.button.secondary {
+  border: 1px solid var(--line);
+  height: calc(48px * var(--s));
+  padding: calc(13px * var(--s)) calc(25px * var(--s));
+}
+
+.section {
+  padding: clamp(48px, 6vh, calc(84px * var(--s))) clamp(24px, 7vw, calc(128px * var(--s)));
+}
+
+.section-title {
+  align-items: center;
+  display: flex;
+  gap: calc(21px * var(--s));
+  justify-content: center;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+
+.section-title h2 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(25px, 2.6vw, calc(31px * var(--s)));
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.1;
+  /* Keep the title on one line. As a flex item with wrappable text its min-content is
+     only the longest word, so flexbox would squeeze it and wrap ("Naše / usluge") while
+     the ornaments kept their width; nowrap makes its min-content the whole phrase, so the
+     high-flex-shrink ornament lines give up their width first. (Below 390px the longest
+     title can't fit even with collapsed ornaments — see the wrap fallback below.) */
+  white-space: nowrap;
+}
+
+/* Narrower than the 390px design width, the longest title ("Pogrebne usluge Balan" on
+   O nama) no longer fits on one line even once the ornaments have fully collapsed, so
+   allow it to wrap there rather than overflow the viewport. Short titles still fit, and
+   the decor flex-shrink keeps them on a single line. */
+@media (max-width: 389.98px) {
+  .section-title h2 { white-space: normal; }
+}
+
+.section-title .decor {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  /* Give up width to the title before it wraps. A far larger flex-shrink than the
+     h2's default means the ornaments absorb almost all of any width deficit, so short
+     titles ("Naše usluge") stay on one line — the lines just shorten — instead of the
+     text being squeezed to its longest word and wrapping. A long title (onama's
+     "Pogrebne usluge Balan") still wraps, but only once the ornaments have fully
+     collapsed and it genuinely can't fit the margins. */
+  flex-shrink: 999;
+  min-width: 0;
+}
+
+.section-title .decor .dot {
+  background: var(--line);
+  border-radius: 999px;
+  display: block;
+  /* Must not shrink — as a flex item it otherwise collapses to a thin vertical sliver instead of a
+     round dot (the line beside it takes the remaining width). */
+  flex-shrink: 0;
+}
+
+.section-title .decor .dot-a {
+  height: 5px;
+  width: 5px;
+}
+
+.section-title .decor .dot-b {
+  height: 4px;
+  width: 4px;
+}
+
+.section-title .decor .line {
+  /* dark (--line) sits next to the title text and fades out to light at the outer edge
+     (per client / Figma); .decor-left mirrors this via scaleX(-1) below. */
+  background: linear-gradient(90deg, var(--line), var(--decor-bg, #fdf7f3));
+  border-radius: 999px;
+  display: block;
+  height: 3px;
+  width: 196px;
+}
+
+.section-title .decor-left {
+  flex-direction: row-reverse;
+}
+
+.section-title .decor-left .line {
+  transform: scaleX(-1);
+}
+
+.intro-strip {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 32px clamp(24px, 7vw, calc(128px * var(--s)));
+}
+
+.intro-item {
+  align-items: center;
+  background: white;
+  border: 1px solid rgba(157, 137, 118, 0.28);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+  text-align: center;
+}
+
+.intro-item strong {
+  font-family: var(--serif);
+  font-size: clamp(20px, 1.8vw, calc(24px * var(--s)));
+  font-weight: 400;
+}
+
+.intro-item span {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.about-section {
+  /* The arrangement+candles sit on the RIGHT, copy on the left. NOTE: assets/about-bg.webp is
+     stored MIRRORED (horizontally flipped, magick -flop) vs the Figma source blob 0ee96579db —
+     in Figma the o-nama image node is net-flipped (node.m00=-1 × fill.m00=+1), so the raw blob
+     (arrangement LEFT) must be -flop'd to put the arrangement RIGHT. The pixel-signature asset-sync
+     will therefore flag it as "diverged" from the blob — that divergence is INTENTIONAL, do not revert.
+     Figma veils the arrangement with two cream highlights: a full-height cream linear from the top,
+     plus one large blurred cream ellipse low-left (Figma: solid #fdf7f3, layer-blur 163,
+     box [-124,298 1027×635], centre ≈390,616) that keeps the left-hand copy legible. Reproduced as
+     radial-gradient highlights so the copy stays legible and the section melts into Cvećara below. */
+  background:
+    linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 100%),
+    /* anchored to centre (= 390px at the 1440 reference) so the cream spotlight tracks the
+       centred copy when the page is wider than 1440 instead of drifting to the left edge */
+    radial-gradient(calc(720px * var(--s)) calc(520px * var(--s)) at calc(50% - 330px * var(--s)) calc(616px * var(--s)),
+      #fdf7f3 0%, #fdf7f3 22%, rgba(253, 247, 243, 0.55) 58%, rgba(253, 247, 243, 0) 100%),
+    /* bottom cream fade — melts the arrangement into the Cvećara cream band below */
+    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0.62) 16%, rgba(253, 247, 243, 0) 36%),
+    url("assets/about-bg.webp?v=4") center / cover no-repeat;
+  background-color: var(--paper-light);
+  padding-top: calc(60px * var(--s));
+  padding-bottom: calc(120px * var(--s));
+  position: relative;
+}
+
+.about-grid {
+  margin: 0 auto;
+  max-width: calc(1180px * var(--s));
+}
+
+.about-grid .copy-block {
+  max-width: calc(531px * var(--s));
+}
+
+.about-section .section-title {
+  margin-bottom: 60px;
+}
+
+.about-section .section-title h2 {
+  line-height: 49px;
+}
+
+.gerber-grid {
+  align-items: start;
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr 1fr;
+  /* The Cvećara block is a full-width 1440 design (bouquet left, card right, gold heading
+     bleeding off the right). Keep it 1440 wide and centre it beyond 1440 so the card's
+     right edge lines up with the other sections' column; the photo/cream stay full-bleed. */
+  margin: 0 auto;
+  max-width: calc(1440px * var(--s));
+}
+
+.copy-block {
+  display: grid;
+  gap: calc(32px * var(--s));
+}
+
+.copy-block h3,
+.cta-panel h2 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(26px, 2.4vw, calc(32px * var(--s)));
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.gerber-card h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(23px, 2.3vw, calc(28px * var(--s)));
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.copy-block h3 {
+  font-size: clamp(23px, 2.3vw, calc(28px * var(--s)));
+  font-style: normal;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.copy-block p {
+  color: var(--ink);
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
+  line-height: 1.6;
+}
+
+.gerber-card p {
+  color: var(--ink);
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
+  line-height: 1.6;
+  margin: 0;
+}
+
+.stats {
+  display: grid;
+  gap: calc(16px * var(--s));
+  grid-template-columns: repeat(3, 165px);
+}
+
+.stats div {
+  align-items: center;
+  background: #ffffff;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(71, 38, 11, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 92px;
+  justify-content: center;
+  text-align: center;
+}
+
+.stats strong {
+  color: var(--ink);
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(20px, 1.6vw, calc(23px * var(--s)));
+  font-style: normal;
+  font-weight: 700;
+  line-height: 36px;
+  margin-bottom: 4px;
+}
+
+.stats span {
+  color: var(--muted);
+  font-size: calc(14px * var(--s));
+  line-height: 20px;
+  opacity: 1;
+}
+
+.about-cta {
+  justify-self: start;
+  margin-top: 4px;
+}
+
+.gerber-image img {
+  filter: drop-shadow(0 12px 22px rgba(71, 38, 11, 0.16));
+  margin: 0 auto;
+}
+
+.gerber-section {
+  /* Figma washes the right ~60% (behind the Cvećara card) with four large blurred
+     cream ellipses (solid #fdf7f3, layer-blur 163) so the photo melts to cream and
+     the section reads as one with O nama above. Reproduced as radial highlights. */
+  background:
+    /* top cream fade — melts up into O nama (symmetric with that section's cream bottom) */
+    linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 20%),
+    /* cream wash behind the Cvećara card (right side). Core kept right-of-centre per Figma
+       125:563, but the left falloff is tightened so the cream clears the bouquet (~x600) and
+       no longer washes over the flowers (client: keep the bouquet clear and defined). */
+    /* anchored to centre (= 1080px / 980px at the 1440 reference) so the cream stays behind the
+       Cvećara card when the page is wider than 1440 instead of sliding left of it */
+    radial-gradient(calc(820px * var(--s)) calc(620px * var(--s)) at calc(50% + 360px * var(--s)) calc(320px * var(--s)), #fdf7f3 0%, #fdf7f3 34%, rgba(253, 247, 243, 0.72) 48%, rgba(253, 247, 243, 0) 60%),
+    radial-gradient(calc(440px * var(--s)) calc(320px * var(--s)) at calc(50% + 260px * var(--s)) calc(70px * var(--s)), #fdf7f3 0%, rgba(253, 247, 243, 0.5) 46%, rgba(253, 247, 243, 0) 70%),
+    /* bottom cream fade — bridges into Usluge (mirrors Figma's seam band) */
+    linear-gradient(0deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 16%),
+    /* Photo — height-fit (`auto 100%`, aspect-locked), left/bottom-anchored, at EVERY width. Its
+       scale follows only the section height, never the viewport width, so resizing the window can
+       never make the bouquet suddenly grow (client: with the old cover↔auto-100% handoff at 2080px
+       the photo visibly jumped ~33% larger when crossing the boundary). Below ~1450px the photo is
+       wider than the viewport anyway (identical rendering to `cover`, right side cropped); on wider
+       screens its right edge lands mid-canvas, which is safe because the webp has a fade to #fdf7f3
+       BAKED into its right side (x2280→2820 of 2968; regenerate from cvecara-bg.png if the asset
+       changes) so it dissolves into background-color — no seam, no gap, no size spikes. */
+    url("assets/cvecara-bg.webp?v=2") left bottom / auto 100% no-repeat;
+  background-color: #fdf7f3;
+  overflow: hidden;
+  padding: 0 0 calc(80px * var(--s));
+  position: relative;
+}
+
+.gerber-image {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 0;
+}
+
+.gerber-image img {
+  filter: drop-shadow(0 14px 28px rgba(71, 38, 11, 0.18));
+  height: auto;
+  margin: 0;
+  max-width: 100%;
+  width: calc(634px * var(--s));
+}
+
+.gerber-card {
+  display: grid;
+  gap: calc(60px * var(--s));
+  padding-top: 24px;
+}
+
+.gerber-heading {
+  align-items: center;
+  background: var(--gold);
+  border-radius: 80px 0 0 80px;
+  display: flex;
+  height: 77px;
+  justify-content: flex-start;
+  margin-left: 16px;
+  /* Bleed the gold strip off the RIGHT viewport edge (per Figma). The grid is capped at
+     1440px*--s and centred, so beyond that there's a cream gutter (100vw - 1440*--s)/2
+     between the card's right edge and the screen. Pull the strip out by exactly that gutter
+     so its square right edge sits flush at the viewport edge; the section's overflow:hidden
+     clips it clean there. min(0px, ...) keeps it at 0 once the grid fills the viewport
+     (<=1440*--s), so narrower screens are unaffected. */
+  margin-right: min(0px, calc((1440px * var(--s) - 100vw) / 2));
+  padding: 0 48px;
+}
+
+.gerber-body {
+  display: grid;
+  gap: calc(32px * var(--s));
+  padding: 0 130px 0 84px;
+}
+
+.check-list {
+  display: grid;
+  gap: calc(16px * var(--s));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.check-list li {
+  align-items: center;
+  color: var(--ink);
+  display: flex;
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.check-icon {
+  flex: 0 0 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.button.with-chevron {
+  gap: 8px;
+  padding: 13px 25px;
+}
+
+.btn-chevron {
+  flex: 0 0 24px;
+  height: 24px;
+  width: 24px;
+}
+
+.gerber-body .button {
+  justify-self: start;
+}
+
+.services-section {
+  --decor-bg: #f1e7e2;
+  /* Figma bridges the Cvećara→Usluge seam with a wide cream band; reproduced as a
+     cream fade at the top that melts into the section's #f1e7e2 body. */
+  background:
+    linear-gradient(180deg, #fdf7f3 0%, rgba(253, 247, 243, 0) 24%),
+    #f1e7e2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+  padding: 30px max(var(--gutter), calc((100% - var(--content-max)) / 2)) 60px;
+  position: relative;
+}
+
+/* (The 9px greige divider at the Usluge→Kontakt seam was removed per client — same as the
+   hero-bottom dividers; the photo band's own edge separates the sections.) */
+
+.services-section .section-title {
+  margin: 0;
+}
+
+.service-grid {
+  display: grid;
+  gap: calc(32px * var(--s));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  max-width: none;
+  width: 100%;
+}
+
+.service-card {
+  background: white;
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.service-card-image {
+  background: var(--gold);
+  height: 240px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.service-card-image img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.service-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(20px * var(--s));
+  padding: 20px;
+}
+
+.service-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.service-card h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(18px, 1.5vw, calc(21px * var(--s)));
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.service-card p {
+  color: #6b625a;
+  font-family: var(--sans);
+  font-size: calc(16px * var(--s));
+  font-weight: 400;
+  line-height: 24px;
+  margin: 0;
+}
+
+.service-card-cta {
+  align-items: center;
+  color: var(--ink);
+  display: inline-flex;
+  font-family: var(--sans);
+  font-size: calc(16px * var(--s));
+  font-weight: 600;
+  gap: 8px;
+  line-height: 21px;
+}
+
+.arrow-right {
+  flex: 0 0 24px;
+  height: 24px;
+  width: 24px;
+}
+
+.info-grid {
+  display: grid;
+  gap: calc(32px * var(--s));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  max-width: none;
+  width: 100%;
+}
+
+.info-card {
+  background: white;
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.32);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 232px;
+  padding: 20px;
+}
+
+.info-card img {
+  height: 83px;
+  object-fit: contain;
+  object-position: left center;
+  width: auto;
+  max-width: calc(130px * var(--s));
+}
+
+.info-card h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: calc(20px * var(--s));
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24.8px;
+  margin: 0;
+}
+
+.info-card p {
+  color: #6b625a;
+  font-family: var(--sans);
+  font-size: calc(16px * var(--s));
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0;
+}
+
+.obituary-preview-grid {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 auto;
+  max-width: calc(1180px * var(--s));
+}
+
+.obituary-preview img {
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Umrlice (matches the Figma design): each obituary shown in FULL, one per row. The scans are
+   landscape (~767×532), so the card's matching aspect-ratio fits them edge-to-edge, uncropped.
+   Newest first; the most recent ~36 show, the rest sit behind the "show older" toggle. Clicking a
+   card opens the full scan in the lightbox. */
+.obituary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: calc(20px * var(--s));
+  width: 100%;
+  max-width: calc(767px * var(--s));
+  margin: 0 auto;
+}
+
+.obituary-grid > a {
+  display: block;
+  width: 100%;
+  aspect-ratio: 767 / 532;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: zoom-in;
+}
+
+.obituary-grid img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.obituary-archive[hidden] { display: none; }
+.obituary-archive { margin-top: calc(20px * var(--s)); }
+
+.btn-show-older {
+  display: block;
+  margin: clamp(30px, 4vh, 48px) auto 0;
+  padding: 14px 32px;
+  color: var(--ink);
+  font: 600 calc(16px * var(--s)) / 1 var(--sans);
+  background: #d5bba2;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.btn-show-older:hover { background: #cbac8d; }
+
+.obituaries-section {
+  background: var(--paper-light);
+  padding: 60px max(var(--gutter), calc((100% - var(--content-max)) / 2)) 80px;
+}
+
+.cta-section {
+  /* Figma darkens the photo with a 30% black overlay so the frosted card reads cleanly.
+     Crisp boundaries (per client / Figma): the dark contact band is clearly separated from the
+     Usluge section above and the white footer below — no gradient blend at either seam. */
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url("assets/contact-bg.webp?v=2") center / cover no-repeat;
+  padding: 60px max(var(--gutter), calc((100% - var(--content-max)) / 2));
+}
+
+.cta-panel {
+  align-items: center;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  box-shadow: 0 0 20px 0 rgba(71, 38, 11, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0;
+  padding: 32px;
+  text-align: center;
+  width: 100%;
+}
+
+.eyebrow {
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: calc(16px * var(--s));
+  font-weight: 400;
+  letter-spacing: 1.95px;
+  line-height: 20px;
+  text-transform: uppercase;
+}
+
+.cta-panel h2 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(28px, 3vw, calc(34px * var(--s)));
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1.2;
+}
+
+.cta-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(20px * var(--s));
+}
+
+.cta-sub {
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(15px, 1.3vw, calc(17px * var(--s)));
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.phone-link {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.2vw, calc(38px * var(--s)));
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.contact-details {
+  align-items: center;
+  color: var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  justify-content: center;
+}
+
+.contact-detail {
+  align-items: center;
+  color: var(--ink);
+  display: inline-flex;
+  font-family: var(--sans);
+  font-size: calc(16px * var(--s));
+  font-weight: 400;
+  gap: 8px;
+  line-height: 21px;
+  text-decoration: none;
+}
+
+.contact-icon {
+  flex: 0 0 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.cta-button {
+  /* Figma: a fixed 524-wide gold pill centred in the card (NOT full-width). The card's
+     align-items:center centres it; min(…, 100%) lets it shrink to fit narrow cards so it never
+     overflows. Vertical padding gives Figma's 56px height. (Mobile reverts to full-width below.) */
+  padding: calc(16px * var(--s)) calc(40px * var(--s));
+  width: min(calc(524px * var(--s)), 100%);
+}
+
+.site-footer {
+  background: white;
+  padding: 0 max(var(--gutter), calc((100% - var(--content-max)) / 2));
+}
+
+.footer-grid {
+  display: grid;
+  gap: 48px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 60px 0;
+}
+
+.footer-brand {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-start;
+  gap: calc(20px * var(--s));
+}
+
+.footer-brand .logo {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-brand p {
+  color: #6b625a;
+  font-family: var(--sans);
+  font-size: calc(14px * var(--s));
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0;
+  max-width: calc(248px * var(--s));
+}
+
+.footer-cta {
+  background: var(--gold);
+  border: 0;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+  font: 500 calc(14px * var(--s))/1.5 var(--sans);
+  min-width: 0;
+  padding: 10px 40px;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: calc(16px * var(--s));
+}
+
+.site-footer h3 {
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: calc(14px * var(--s));
+  font-weight: 600;
+  letter-spacing: 0.325px;
+  line-height: 21.45px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-contact li {
+  align-items: center;
+  color: #6b625a;
+  display: flex;
+  font-family: var(--sans);
+  font-size: calc(14px * var(--s));
+  font-weight: 400;
+  gap: 10px;
+  line-height: 20px;
+}
+
+.footer-contact a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-icon {
+  color: var(--ink);
+  flex: 0 0 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links a {
+  color: #6b625a;
+  font-family: var(--sans);
+  font-size: calc(14px * var(--s));
+  font-weight: 400;
+  line-height: 20px;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 2px;
+}
+
+.footer-bottom {
+  align-items: center;
+  border-top: 0.667px solid #e7ddd4;
+  color: #91867d;
+  display: flex;
+  font-family: var(--sans);
+  font-size: calc(16px * var(--s));
+  font-weight: 400;
+  justify-content: space-between;
+  line-height: 26.4px;
+  padding: 24px 0 32px;
+}
+
+.footer-bottom strong {
+  font-weight: 700;
+}
+
+.gallery-page {
+  --decor-bg: #f1e7e2;
+  background: #f1e7e2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(24px, 3.5vh, 44px);
+  padding: clamp(40px, 5vh, 60px) max(var(--gutter), calc((100% - var(--content-max)) / 2)) clamp(48px, 6vh, 80px);
+  position: relative;
+}
+
+.gallery-page .section-title {
+  margin: 0;
+}
+
+.gallery-module {
+  display: grid;
+  gap: 30px;
+  margin: 0 auto;
+  max-width: calc(1180px * var(--s));
+  width: 100%;
+}
+
+/* One line, horizontal scroll when the chips don't fit — matches Figma, where this row is
+   clipped to the content column and the chip strip overflows it (cut off mid-chip), rather
+   than wrapping. Scrollbar hidden for a clean swipe-strip look; the cut-off chip at the edge
+   is the scroll affordance. */
+.filter-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.filter-row::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-icon {
+  align-items: center;
+  background: #d5bba2;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 48px;
+  justify-content: center;
+  padding: 0;
+  width: 48px;
+}
+
+.filter-icon svg {
+  height: 12px;
+  width: 18px;
+}
+
+.chip {
+  align-items: center;
+  background: transparent;
+  border: 1px solid #9d8976;
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  font: 600 calc(16px * var(--s))/1.5 var(--sans);
+  height: 48px;
+  justify-content: center;
+  min-width: 132px;
+  padding: 12px 16px;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: rgba(213, 187, 162, 0.2);
+}
+
+.chip.active {
+  background: #d5bba2;
+  border-color: #d5bba2;
+}
+
+.gallery-main {
+  background: white;
+  border: 1px solid #d5bba2;
+  border-radius: 30px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
+  cursor: zoom-in;
+  height: clamp(320px, 58svh, 574px);
+  overflow: hidden;
+  position: relative;
+}
+
+/* The main preview always shows the WHOLE image (contain) — nothing is cropped. Portrait shots
+   get side stripes, landscape shots get top/bottom stripes, both on the white gallery box. */
+.gallery-main img {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  padding: 0;
+  width: 100%;
+}
+
+/* Product shots on a white background (pogrebna oprema / coffins) — show the WHOLE item rather than
+   cropping it. The white letterbox blends into the white gallery box, so there's no visible padding;
+   applies to the big preview and the thumbnails alike. `--fit` is the smart variant (cvecara): it
+   defaults to contain too, but site.js upgrades images that would leave only a small gap to cover. */
+.gallery-module--contain .gallery-main img,
+.gallery-module--contain .thumb-strip img,
+.gallery-module--fit .gallery-main img,
+.gallery-module--fit .thumb-strip img {
+  object-fit: contain;
+}
+
+.image-label {
+  background: #9d8976;
+  border-radius: 12px;
+  color: white;
+  font: 500 calc(20px * var(--s))/1.5 var(--sans);
+  left: 19px;
+  padding: 9px 12px;
+  position: absolute;
+  top: 19px;
+  z-index: 1;
+}
+
+.gallery-slider {
+  align-items: center;
+  display: grid;
+  gap: 24px;
+  /* The strip sizes itself to exactly --thumb-n thumbnails (below), so let the middle column shrink to
+     it and centre the whole [arrow · strip · arrow] group — the arrows stay right beside the strip. */
+  grid-template-columns: 48px auto 48px;
+  justify-content: center;
+}
+
+.round-arrow {
+  align-items: center;
+  background: transparent;
+  border: 1px solid #9d8976;
+  border-radius: 50%;
+  color: #47260b;
+  cursor: pointer;
+  display: inline-flex;
+  height: 48px;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease;
+  width: 48px;
+}
+
+.round-arrow:hover {
+  background: rgba(157, 137, 118, 0.12);
+}
+
+.round-arrow svg {
+  height: 24px;
+  width: 24px;
+}
+
+/* Carousel viewport: clips to exactly --thumb-n thumbnails; the .thumb-track inside holds every image
+   in one row and slides one image at a time (transform animated). Vertical padding lets the thumbnail
+   shadows breathe; the horizontal overflow is what hides the off-window images. The strip is sized to
+   hold precisely --thumb-n thumbnails (N boxes + gaps + its 20px side padding) so no partial thumbnail
+   ever peeks in, and .gallery-slider centres it. Each box is a FIXED --thumb-w wide, so narrower
+   screens simply show fewer of them (site.js reads --thumb-n) — the boxes never shrink or squeeze. */
+.thumb-strip {
+  --thumb-gap: calc(20px * var(--s));
+  --thumb-w: calc(176px * var(--s));
+  overflow: hidden;
+  padding: 12px 10px;
+  width: calc(var(--thumb-n) * var(--thumb-w) + (var(--thumb-n) - 1) * var(--thumb-gap) + 20px);
+  max-width: 100%;
+}
+
+.thumb-track {
+  display: grid;
+  gap: var(--thumb-gap);
+  grid-auto-columns: var(--thumb-w);
+  grid-auto-flow: column;
+  transition: transform 0.32s ease;
+  will-change: transform;
+}
+
+.thumb-strip button {
+  background: white;
+  border: 1px solid #d5bba2;
+  border-radius: 20px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  height: clamp(110px, 15svh, 170px);
+  overflow: hidden;
+  padding: 0;
+  transition: transform 0.15s ease;
+  width: 100%;
+}
+
+.thumb-strip button:hover {
+  transform: translateY(-2px);
+}
+
+.thumb-strip button.active {
+  border-color: var(--ink);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32), 0 0 0 2px rgba(71, 38, 11, 0.18);
+}
+
+.thumb-strip img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Drop the visible-thumbnail count as the viewport narrows, so each box keeps its fixed --thumb-w
+   instead of being squeezed thinner. Counts are chosen so N boxes (+ gaps + padding) always fit the
+   available strip at that width; site.js reads --thumb-n to keep its slide window in sync. The <=767
+   phone tier ignores this — it lays the thumbnails out as a wrapping 3-col grid instead of a slider. */
+@media (max-width: 1439.98px) { :root { --thumb-n: 4; } }
+@media (max-width: 1228.98px) { :root { --thumb-n: 3; } }
+@media (max-width: 865.98px)  { :root { --thumb-n: 2; } }
+
+.contact-layout {
+  background: var(--paper-light);
+  display: flex;
+  justify-content: center;
+  /* Equal gap above and below the card (top was 0, so it touched the hero). */
+  padding: 80px max(var(--gutter), calc((100% - var(--content-max)) / 2)) 80px;
+}
+
+.contact-card {
+  background: white;
+  border: 1px solid #d5bba2;
+  border-radius: 20px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.32);
+  display: grid;
+  grid-template-columns: minmax(300px, 394px) minmax(0, 1fr);
+  min-height: calc(520px * var(--s));
+  max-width: 100%;
+  overflow: hidden;
+  width: calc(952px * var(--s));
+}
+
+.contact-info {
+  /* Figma puts a soft floral photo on the left of the card that dissolves into the white
+     form on the right. We veil the contact hero photo (white roses) heavily so the info text
+     stays legible — cleaner over the top (info), a touch more photo toward the base — then
+     fade it into the form's white via the right-edge gradient (.contact-info::after). */
+  background:
+    linear-gradient(180deg, rgba(253, 247, 243, 0.93) 0%, rgba(253, 247, 243, 0.9) 55%, rgba(253, 247, 243, 0.84) 100%),
+    #f1e7e2 url("assets/hero-contact.webp") left bottom / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(28px, 2.6vw, 40px);
+  position: relative;
+}
+
+.contact-info::after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 92%);
+  content: "";
+  height: 100%;
+  pointer-events: none;
+  position: absolute;
+  right: -1px;
+  top: 0;
+  width: 128px;
+}
+
+/* Keep the info text ABOVE the right-edge fade (and the photo) so it stays fully legible. */
+.contact-info > div {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-info h2 {
+  color: var(--ink);
+  font: 700 calc(16px * var(--s))/1.340625 var(--sans);
+  letter-spacing: 0.325px;
+  margin: 0 0 32px;
+  text-transform: uppercase;
+}
+
+.contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.contact-info-list li {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font: 500 calc(16px * var(--s))/1.25 var(--sans);
+  gap: 10px;
+}
+
+.contact-info-list li svg {
+  color: var(--ink);
+  flex-shrink: 0;
+  height: 16px;
+  width: 16px;
+}
+
+.contact-info-list li a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-info-list li a:hover {
+  color: var(--ink);
+}
+
+.contact-podaci {
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  font: 500 calc(16px * var(--s))/1.25 var(--sans);
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-podaci p {
+  margin: 0;
+}
+
+.contact-podaci strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 1.6vw, 22px);
+  padding: clamp(28px, 2.8vw, 44px);
+}
+
+/* Fill the card height: the fields grow to consume any slack so the first field
+   (Vaše ime) pins to the top and the submit button drops to the bottom. */
+.contact-form .input-fields {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: clamp(12px, 1.2vw, 16px);
+}
+
+/* The message field is the last one — let its label + textarea take the slack. */
+.contact-form .input-fields label:last-child {
+  flex: 1 1 auto;
+}
+
+.contact-form label {
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  font: 400 calc(14px * var(--s))/1.5 var(--sans);
+  gap: 8px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  background: white;
+  border: 0.667px solid #6b625a;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: var(--ink);
+  font: 400 calc(14px * var(--s))/1.5 var(--sans);
+  padding: 8px 12px;
+}
+
+.contact-form input {
+  height: 36px;
+}
+
+.contact-form textarea {
+  flex: 1 1 auto;
+  min-height: 159px;
+  resize: vertical;
+}
+
+.contact-form button[type="submit"] {
+  background: #d5bba2;
+  border: 0;
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+  font: 500 calc(14px * var(--s))/1.5 var(--sans);
+  padding: 10px 40px;
+  transition: filter 0.15s ease;
+  width: 100%;
+}
+
+.contact-form button[type="submit"]:hover {
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
+}
+
+.contact-form.was-validated :invalid {
+  border-color: #9d372b;
+}
+
+.form-status {
+  color: var(--muted);
+  min-height: 22px;
+}
+
+.form-status:empty {
+  display: none;
+}
+
+.obituary-intro {
+  color: var(--muted);
+  font-size: calc(20px * var(--s));
+  line-height: 1.5;
+  margin: 0 auto 42px;
+  max-width: calc(760px * var(--s));
+  text-align: center;
+}
+
+.lightbox {
+  align-items: center;
+  background: rgba(32, 24, 18, 0.82);
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 40;
+}
+
+/* Column layout so the (oprema-only) title can sit ABOVE the photo at every breakpoint.
+   Visually a no-op elsewhere: the photo is the only in-flow item — the close button and the
+   desktop arrows are absolutely positioned, and the counter row only appears on phones. */
+.lightbox:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Image name above the photo — only the oprema gallery (data-lightbox-titles) passes one;
+   on other pages the element stays [hidden]. The figure shrink-wraps to the image, so the
+   left-aligned title starts at the image's left edge (per client) at every breakpoint. */
+.lightbox-figure {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lightbox-title {
+  color: #fdf7f3;
+  font: 600 calc(17px * var(--s))/1.4 var(--sans);
+  letter-spacing: 0.02em;
+  max-width: 92vw;
+  text-align: left;
+}
+.lightbox-title[hidden] { display: none; }
+
+/* When a title is shown, keep title + photo inside the viewport even for tall images. */
+.lightbox:has(.lightbox-title:not([hidden])) img {
+  max-height: calc(100svh - 170px);
+}
+
+.lightbox img {
+  max-height: 88vh;
+  max-width: 92vw;
+  object-fit: contain;
+}
+/* Clicking the image advances to the next one (like the arrows), so hint it as clickable — but only
+   in multi-image galleries; a single-image lightbox doesn't step, so it keeps the default cursor. */
+.lightbox:has(.lightbox-controls:not([hidden])) img {
+  cursor: pointer;
+}
+
+/* Lightbox controls: a clearly-defined round X top-right, and prev/next arrows on the scrim so the
+   visitor sees they can step through images (also works with the ← → keyboard arrows). */
+.lightbox-close,
+.lightbox-nav {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.92);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  position: absolute;
+  transition: background 0.2s ease;
+  z-index: 2;
+}
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  background: #ffffff;
+}
+.lightbox-close {
+  font-size: calc(30px * var(--s));
+  height: 48px;
+  line-height: 1;
+  right: 24px;
+  top: 24px;
+  width: 48px;
+}
+.lightbox-nav {
+  height: 52px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+}
+.lightbox-prev { left: 24px; }
+.lightbox-next { right: 24px; }
+.lightbox-nav svg { height: 26px; width: 26px; }
+.lightbox-nav[hidden] { display: none; }
+
+/* The arrows + counter sit in a wrapper that is transparent to layout on desktop
+   (display:contents keeps the arrows' absolute scrim positions); the "1/12" counter is
+   phone-only — the <=767 tier turns the wrapper into a visible row below the image. */
+.lightbox-controls { display: contents; }
+.lightbox-controls[hidden] { display: none; }
+.lightbox-counter { display: none; }
+/* Umrlice has 327 obituaries in one lightbox group, so the phone "1/327" counter reads as
+   clutter (per client) — hide it on that page only; other galleries keep their small count. */
+.page-umrlice .lightbox-counter { display: none; }
+
+/* ─── O nama (About) page ─────────────────────────────────────────────────────
+   Hero + a centred content column (intro + two cards). The ivy sits at the very bottom, BEHIND the
+   frosted "Dostupni smo 24/7" card (backdrop-blur, so the ivy shows softly through it) and its
+   greenery rests on the footer top. Body text matches the rest of the site (~17.5px). */
+.about-page {
+  background: var(--paper-light);
+  isolation: isolate; /* own stacking context so the ivy's z-index:-1 sits ABOVE the section bg */
+  padding-bottom: calc(48px * var(--s));
+  position: relative;
+}
+
+.about-content {
+  display: grid;
+  gap: calc(34px * var(--s));
+  margin: 0 auto;
+  max-width: var(--content-max);
+}
+
+.about-intro {
+  display: grid;
+  gap: calc(16px * var(--s));
+}
+
+.about-intro p {
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
+  line-height: 1.6;
+  margin: 0;
+}
+
+.about-intro strong {
+  font-weight: 700;
+}
+
+.about-card {
+  background: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 0 40px 0 rgba(71, 38, 11, 0.14);
+  display: grid;
+  gap: calc(22px * var(--s));
+  padding: calc(32px * var(--s)) calc(36px * var(--s));
+}
+
+/* Card lead-in ("Naše usluge obuhvataju:") — site-standard card-heading size. */
+.about-card h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(18px, 1.5vw, calc(21px * var(--s)));
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Contact card heading ("Dostupni smo 24/7") — italic per Figma, same size. */
+.about-contact-card h3 {
+  font-style: italic;
+}
+
+.about-services {
+  display: grid;
+  gap: calc(18px * var(--s));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.about-services li {
+  align-items: start;
+  display: grid;
+  gap: calc(12px * var(--s));
+  grid-template-columns: 20px 1fr;
+}
+
+.about-services .check-icon {
+  margin-top: 2px;
+}
+
+.about-services h4 {
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(16px, 1.35vw, calc(18px * var(--s)));
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 5px;
+}
+
+.about-services p {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: clamp(15px, 1.25vw, calc(16px * var(--s)));
+  line-height: 1.55;
+  margin: 0;
+}
+
+.about-contact-card > p {
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(16px, 1.3vw, calc(17.5px * var(--s)));
+  line-height: 1.65;
+  margin: 0;
+}
+
+.about-contact-details {
+  display: grid;
+  gap: calc(12px * var(--s));
+}
+
+.about-contact-details .contact-detail {
+  font-size: clamp(15px, 1.3vw, calc(17px * var(--s)));
+  gap: 12px;
+  justify-self: start;
+}
+
+/* Frosted glass: translucent + backdrop blur so the ivy behind shows softly through it. */
+.about-contact-card {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/* Ivy: full-bleed, pinned BEHIND the content (z-index:-1), its greenery resting ON TOP of the
+   footer (negative bottom spills it past the section onto the footer's top edge — the section is an
+   isolated stacking context painted above the static footer). Transparent PNG, only greenery shows.
+   Offset: per Figma (image node 309:2804, bottom flush with the footer) the greenery RESTS on the
+   footer's top edge. The source (1672x941) is transparent below its greenery (alpha ends at y=770,
+   i.e. 171px = 18.2% of its height above the bottom edge), so the img's bottom edge must sit that
+   far BELOW the footer top: 18.2% of height = 10.2% of the rendered width (aspect 1.777), plus a
+   few px so the sparse leaf tips visibly touch → offset = rendered width (min(100vw, 1440*--s))
+   * -0.105. Width-proportional, so the greenery stays put at every viewport width. */
+.about-ivy {
+  bottom: calc(min(100vw, 1440px * var(--s)) * -0.105);
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: -1;
+}
+
+.about-ivy img {
+  display: block;
+  margin: 0 auto;
+  max-width: calc(1440px * var(--s));
+  width: 100%;
+}
+
+/* ─── Warm micro-interactions ─────────────────────────────────────────────────
+   Subtle, slow, decelerating hover motion so the site feels welcoming: CTAs lift
+   with a soft warm (brown) shadow and press in on click; cards lift while their
+   photos gently zoom; arrows and chevrons drift toward the click. All movement is
+   switched off under prefers-reduced-motion (block at the end). */
+
+/* CTAs / buttons — just a soft warm shadow on hover (no lift). */
+.button {
+  transition: filter 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.25s ease, border-color 0.25s ease;
+}
+.button.primary:hover,
+.footer-cta:hover {
+  filter: drop-shadow(0 8px 16px rgba(71, 38, 11, 0.32));
+}
+.button.secondary:hover {
+  background: rgba(213, 187, 162, 0.16);
+  border-color: var(--gold);
+}
+.btn-chevron {
+  transition: transform 0.25s ease;
+}
+.button.with-chevron:hover .btn-chevron {
+  transform: translateX(2px);
+}
+
+/* Service cards — lift, warm shadow, a slow photo breathe, and the arrow drifts */
+.service-card {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+.service-card-image img,
+.arrow-right {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 34px rgba(71, 38, 11, 0.22);
+}
+.service-card:hover .service-card-image img {
+  transform: scale(1.06);
+}
+.service-card:hover .arrow-right {
+  transform: translateX(3px);
+}
+
+/* Info cards (Sređivanje / Izrada / Zakazivanje) — no hover effect: static, no CTA. */
+
+/* Obituary images (umrlice) are fixed — no hover animation. */
+
+/* Gallery thumbnails — smoother lift + warm shadow. The big main preview has NO hover effect
+   (it opens the full image in the lightbox on click instead). */
+.thumb-strip button {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.thumb-strip button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 22px rgba(71, 38, 11, 0.2);
+}
+
+/* Round gallery arrows — soft warm fill and a tiny scale */
+.round-arrow {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.round-arrow:hover {
+  background: rgba(157, 137, 118, 0.14);
+  transform: scale(1.08);
+}
+
+/* Respect users who prefer reduced motion: keep the soft colour/shadow cues, drop all movement. */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .btn-chevron,
+  .service-card,
+  .service-card-image img,
+  .arrow-right,
+  .thumb-strip button,
+  .round-arrow {
+    transition: none;
+  }
+  .button:hover,
+  .button:active,
+  .button.with-chevron:hover .btn-chevron,
+  .service-card:hover,
+  .service-card:hover .service-card-image img,
+  .service-card:hover .arrow-right,
+  .thumb-strip button:hover,
+  .round-arrow:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE — below the 1024 zoom cutoff the page is no longer scaled. These
+   tiers reproduce the designer's authored Tablet (768) layout (fluid up to 1023),
+   then stack to one column on phones (<768, inferred from the 768 intent).
+   ========================================================================== */
+
+/* ---- NARROW-DESKTOP header (1024–1439) ------------------------------------
+   The desktop header is authored for the 1440 frame (130px gutters, 220px side
+   columns, 24px nav gaps) and only just fits the full nav there; Figma has no
+   in-between frame (tablet 768 already uses the burger). Below 1440 the nav row
+   would wrap ("O nama" broke into two lines, "Kontakt" clipped at 1024). Fix:
+   interpolate the three compressible header dimensions linearly from their 1440
+   values down to 1024 (gutter 130→24, side cols 220→150, gap 24→10) so the nav
+   stays on ONE line the whole way and lands exactly on the base values at 1440
+   (no jump at the boundary). Slopes: value = lo + (hi-lo)/(1440-1024) * (100vw-1024). */
+@media (min-width: 1024px) and (max-width: 1439.98px) {
+  .site-header {
+    grid-template-columns: clamp(150px, 16.83vw - 22.3px, 220px) 1fr clamp(150px, 16.83vw - 22.3px, 220px);
+    padding: 0 clamp(24px, 25.48vw - 236.9px, 130px);
+  }
+
+  .main-nav {
+    column-gap: clamp(10px, 3.365vw - 24.46px, 24px);
+  }
+}
+
+/* ---- TABLET tier (<=1023, authored from the 768 frame) -------------------
+   Boundary is 1023.98 (not 1023) to pair gaplessly with the head script's zoom,
+   which turns on at matchMedia('(min-width:1024px)') — same media engine, so the
+   scaled-desktop range and this tablet range never gap or overlap at the edge. */
+@media (max-width: 1023.98px) {
+  /* Mobile/tablet header: hamburger on the LEFT, logo on the RIGHT (collapsed nav). Both pinned to
+     grid-row 1 so they share one row (sparse auto-placement otherwise stacks them into two rows). */
+  .site-header {
+    grid-template-columns: 44px 1fr;
+    height: auto;
+    min-height: 70px;
+    padding: 10px 40px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .logo {
+    align-items: flex-end;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    text-align: right;
+  }
+
+  /* Left slide-in drawer — matches Figma "MENU / Mobile": a SOLID-white rounded card inset 4px from
+     the screen edges (border-radius 20, drop-shadow), ~42% wide on tablet (mobile widens it below).
+     Closed = off-screen left; opening slides it in. */
+  .main-nav {
+    align-items: stretch;
+    background: #ffffff;
+    border: 0;
+    border-radius: 20px;
+    bottom: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    justify-content: flex-start;
+    left: 4px;
+    overflow-y: auto;
+    padding: 56px 16px 16px;
+    position: fixed;
+    top: 4px;
+    transform: translateX(calc(-100% - 16px));
+    transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.34s;
+    visibility: hidden;
+    width: 42%;
+    z-index: 60;
+  }
+
+  .main-nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  /* X close icon — top-RIGHT of the drawer (ink). 24px icon inside a 44px tap target (padding 10);
+     the svg fills the content box so it sizes reliably (it shrinks unpredictably as a flex item). */
+  .nav-close {
+    background: transparent;
+    border: 0;
+    box-sizing: border-box;
+    color: var(--ink);
+    cursor: pointer;
+    display: block;
+    height: 44px;
+    padding: 10px;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 44px;
+  }
+  .nav-close svg {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* Dimming scrim behind the drawer; click it to close. */
+  .nav-scrim {
+    background: rgba(32, 24, 18, 0.45);
+    display: block;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transition: opacity 0.34s ease;
+    z-index: 55;
+  }
+  .nav-scrim.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Menu rows — 14px Medium, muted (#6b625a), left-aligned, ~48px tall, with a 1px gold (#d5bba2)
+     divider between each (none under the last). */
+  .main-nav > a,
+  .dropdown a {
+    border-bottom: 1px solid var(--gold);
+    border-radius: 0;
+    color: var(--muted);
+    font-size: calc(14px * var(--s));
+    font-weight: 500;
+    line-height: 1.45;
+    padding: 14px 0;
+    text-align: left;
+    width: 100%;
+  }
+
+  .main-nav > a:last-of-type {
+    border-bottom: 0;
+  }
+
+  .main-nav > a.active {
+    font-weight: 500; /* flat list per Figma — no bold active row */
+  }
+
+  .main-nav > a::after {
+    content: none; /* no hover underline in the drawer */
+  }
+
+  .nav-divider {
+    display: none;
+  }
+
+  /* Not in the mobile menu: the "Usluge" trigger — its three service links show flat instead
+     (Pogrebna oprema / Cvetni aranžmani / Prevoz). "O nama" was hidden here too while the old
+     design had no such page; the current design added one (onama.html), so the link stays. */
+  .services-menu > button {
+    display: none;
+  }
+
+  .services-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .dropdown {
+    background: none;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 0;
+    opacity: 1;
+    padding: 0;
+    pointer-events: auto;
+    position: static;
+    transform: none;
+  }
+
+  .hero,
+  .page-hero {
+    min-height: 560px;
+    padding-top: 100px;
+  }
+
+  /* Homepage hero: buttons move up directly under the title — the Tablet frame
+     orders it title -> buttons -> ornament -> subtitle. (.hero-copy is flex-column.) */
+  .hero h1 { order: 1; }
+  .hero .hero-actions { order: 2; margin-top: 8px; }
+  .hero .ornament { order: 3; }
+  .hero p { order: 4; }
+
+  /* Tighten the vertical rhythm to the Tablet frame's more compact spacing (no zoom
+     below 1024, so desktop's 72px section padding / 240px card images read too airy). */
+  .section { padding: 48px clamp(20px, 6vw, 64px); }
+  .section-title { margin-bottom: 32px; }
+  .about-section .section-title { margin-bottom: 32px; }
+  .copy-block { gap: 24px; }
+  .service-grid,
+  .info-grid { gap: 20px; }
+  .service-card-image { height: 190px; }
+  .service-card-body { gap: 14px; }
+  .info-card { min-height: 0; }
+
+  /* Type scale — drop to ~0.70x the desktop px so it matches the Tablet frame AND lines
+     up with the zoomed desktop just above 1024 (zoom there is ~0.70). Without this, type
+     would jump LARGER crossing 1024 -> 1023, a backwards discontinuity as the screen narrows. */
+  .hero h1 { font-size: 34px; line-height: 46px; }
+  .hero-br { display: inline; }
+  .hero p { font-size: 16px; line-height: 24px; }
+  .section-title h2,
+  .about-section .section-title h2 { font-size: 26px; line-height: 1.3; }
+  .copy-block h3,
+  .gerber-card h3 { font-size: 23px; line-height: 1.25; }
+  .copy-block p,
+  .gerber-card p { font-size: 17px; line-height: 26px; }
+  .stats strong { font-size: 20px; line-height: 28px; }
+  .service-card h3 { font-size: 18px; line-height: 1.25; }
+  .cta-panel h2 { font-size: 28px; line-height: 34px; }
+  .cta-sub { font-size: 16px; line-height: 26px; }
+  .phone-link { font-size: 32px; line-height: 44px; }
+
+  .intro-strip,
+  .about-grid,
+  .obituary-preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .obituaries-section {
+    padding: 40px 20px 60px;
+  }
+
+
+  .gerber-heading {
+    margin-left: 0;
+  }
+
+  /* Tablet keeps Cvećara 2-column. CRITICAL: the photo lives INSIDE the left column
+     (gerber-image), NOT as the section background — otherwise it sizes to the tall section
+     and bleeds across the checklist, making the text unreadable. Section stays solid cream
+     so the checklist on the right is always legible. (Phone reverts to a top strip below.) */
+  .gerber-section {
+    background: #fdf7f3;
+    padding: 0 0 56px;
+  }
+
+  .gerber-grid {
+    align-items: stretch;
+  }
+
+  .gerber-image {
+    background: url("assets/cvecara-bg.webp") left center / cover no-repeat;
+    min-height: 320px;
+    padding: 0;
+  }
+
+  .gerber-body {
+    padding: 0 24px;
+  }
+
+  .gerber-card {
+    gap: 28px;
+    padding-top: 24px;
+  }
+
+  /* Tablet keeps the contact card 2-column (info | form) to match the Figma 768 frame:
+     fluid info column + auto height so it fits the narrower width. Phone stacks it below. */
+  .contact-card {
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+    height: auto;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .contact-info {
+    min-height: 0;
+  }
+
+  /* keep the desktop right-edge fade (inherited), just narrower for the slimmer column */
+  .contact-info::after {
+    width: 64px;
+  }
+
+  .contact-layout {
+    padding: 60px 20px;
+  }
+
+  /* Naše usluge — the first service card spans the full width (featured); the other
+     two share a row. Info cards stay 3-across (unchanged from desktop). */
+  .service-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .service-grid .service-card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Match the frame's 2-up order (prevoz left, cvećara right) via `order`, keeping DOM
+     order oprema->cvećara->prevoz for tab/reader sequence. */
+  .service-grid .service-card:nth-child(3) { order: 1; }
+  .service-grid .service-card:nth-child(2) { order: 2; }
+
+  /* Kontakt CTA — swap the centred-container padding for simple fluid padding. */
+  .cta-section {
+    padding: 48px clamp(20px, 5vw, 48px);
+  }
+
+  .cta-panel {
+    gap: 28px;
+    padding: 28px 24px;
+  }
+
+  /* Footer — three link columns; the brand block is dropped to match the frame (the
+     logo is already in the header). */
+  .footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 36px 24px;
+  }
+
+  .footer-brand {
+    display: none;
+  }
+}
+
+/* ---- PHONE tier (<=767, inferred — stack the tablet's multi-col rows) ----- */
+/* ============================================================================
+   MOBILE  (<=767, reference = Figma "Mobile" 390 frame; canonical frame 232:1854)
+   Single-column reflow that reproduces the authored Mobile-390 layout: short
+   text hero, 24px section titles / 14px body, stats 3-up, Naše usluge as a list
+   of horizontal image-left rows, kontakt as a white card on the photo, footer
+   as two stacked contact blocks. Cvećara section + Brzi linkovi footer column
+   are hidden (Figma omits them on mobile — user-confirmed; reversible). The
+   <=640 block below only carries gallery + a couple of width tweaks so it never
+   overrides this tier at the 390 test width. */
+@media (max-width: 767px) {
+  /* Drawer widens to a little more than half the screen on phones (tablet keeps it under half). */
+  .main-nav { width: 62%; }
+
+  /* --- Header / logo (hamburger nav already wired in the <=1024 tier). Override the
+         base 130px gutter padding, which would crush the header on a phone. --- */
+  .site-header { height: auto; min-height: 60px; padding: 10px 16px; }
+  .logo span { font-size: 34px; height: 31px; line-height: 31px; }
+  .logo small { font-size: 7px; }
+
+  /* Subpage heroes are short, so their scroll cue is hidden — but the homepage hero is full-screen
+     on mobile, so keep its cue to invite scrolling. */
+  .scroll-cue { display: none; }
+  .hero .scroll-cue { display: inline-flex; }
+  .section-title span { width: 68px; }
+
+  /* --- HERO: short, centred text; order title -> buttons -> ornament -> subtitle
+         (set in the tablet tier). Buttons stack full-width. --- */
+  .hero,
+  .page-hero {
+    padding: 96px 30px 36px;
+    justify-content: center;
+  }
+  /* Homepage hero fills the WHOLE screen on mobile (per Figma "Homepage / Mobile" 390x844); the rest
+     of the page is revealed on scroll. The sticky cream header (~64px) sits above it, so subtract it
+     to keep header + hero at exactly one screen (scroll cue lands at the bottom edge).
+     Subpages keep the short ~240px hero (below).
+     Padding is bottom-heavy on purpose: the hero starts 64px down (under the header), so
+     bottom = top + 64 re-centres the copy on the SCREEN — the CTA buttons (the copy's visual
+     middle) land at mid-screen (per client), not below it. */
+  .hero {
+    min-height: calc(100svh - 64px);
+    padding: 32px 30px 96px;
+  }
+  /* Subpage heroes on mobile show ONLY the page title — the ornament (separator) and the
+     subtitle are dropped, confirmed across all 7 "<page> / Mobile" Figma frames (each places
+     just the centred title over the photo, no divider/subtitle). The lone title sits in the
+     upper third, ~64px below the cream header, matching the Figma majority (Galerija / Umrlice /
+     Kontakt / O nama at y≈130; the three Usluge frames sit a touch higher at y≈90 — design
+     drift with no semantic selector to split on, so we use one consistent placement). */
+  .page-hero { min-height: 240px; justify-content: flex-start; padding-top: 64px; }
+  /* Prevoz: keep the van at its smallest (cover) and centred. The van sits in the lower-
+     middle of the photo (roof ~38%, wheels ~72%), so `center` reads as balanced; a short
+     240px hero can't also open a large gap under the title without zooming the van up. */
+  .page-hero.page-hero--prevoz {
+    background-position: center;
+    background-size: cover;
+  }
+  .page-hero .ornament,
+  .page-hero-copy p { display: none; }
+  .hero h1,
+  .page-hero h1 { font-size: 24px; line-height: 32px; max-width: 320px; }
+  .hero p,
+  .page-hero p { font-size: 12px; line-height: 18px; }
+  .ornament { width: 240px; height: 12px; }
+  .hero-copy,
+  .page-hero-copy { gap: 14px; }
+  .hero .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    /* The hero pads 30px per side but sections pad 16px; extend the row by the 14px
+       difference so the hero CTAs render exactly as wide as .about-cta (viewport - 32). */
+    width: calc(100% + 28px);
+  }
+  /* Both hero CTAs are identical full-width pills, sized to match the "Saznajte više o nama"
+     button (per client): its 16px type and 13px padding = 50px tall. The fixed height overrides
+     .button.secondary's 48px so the filled + outlined buttons match exactly. */
+  .hero .hero-actions .button {
+    box-sizing: border-box;
+    font-size: 16px;
+    height: 50px;
+    padding: 0 24px;
+    width: 100%;
+  }
+
+  /* --- Sections: tighter mobile rhythm + 24px titles --- */
+  .section { padding: 36px 16px; }
+  .section-title { margin-bottom: 24px; }
+  .section-title h2,
+  .about-section .section-title h2 { font-size: 24px; line-height: 1.3; }
+
+  /* --- O NAMA --- */
+  .about-grid,
+  .intro-strip,
+  .obituary-preview-grid { grid-template-columns: 1fr; }
+  .copy-block { gap: 20px; }
+  .copy-block h3 { font-size: 20px; line-height: 1.3; }
+  .copy-block p { font-size: 14px; line-height: 22px; }
+  /* Stats stay 3-up (Figma 3x113), plain centred text — no white card on mobile. */
+  /* Stats stay in white cards on mobile too (Figma: three white 113x57 containers, gap 10),
+     just smaller — number 16px + label 10px. */
+  .stats { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stats div {
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(71, 38, 11, 0.08);
+    gap: 2px;
+    height: auto;
+    min-height: 57px;
+    padding: 8px 4px;
+  }
+  .stats strong { font-size: 16px; line-height: 22px; margin-bottom: 0; }
+  .stats span { font-size: 10px; line-height: 14px; }
+  .about-cta { width: 100%; justify-self: stretch; }
+
+  /* --- CVEĆARA section — Figma omits it on mobile (user-confirmed). Hidden here
+         only; desktop/tablet keep it, and the markup is untouched (reversible). --- */
+  .gerber-section { display: none; }
+
+  /* --- NAŠE USLUGE — Figma reflows the cards into a single list of horizontal
+         rows: a square image on the left, heading + paragraph on the right; the
+         three service rows keep their CTA link, the three info rows don't. --- */
+  /* The section is a flex column with an 80px desktop gap; tighten it so the service
+     rows and info rows read as one continuous list. */
+  .services-section { background: var(--paper); gap: 16px; }
+  .services-section .section-title { margin-bottom: 8px; }
+  .service-grid,
+  .info-grid { grid-template-columns: 1fr; gap: 16px; }
+  /* drop the tablet featured-span / 2-up reorder back to plain stacking */
+  .service-grid .service-card:first-child { grid-column: auto; }
+  .service-grid .service-card:nth-child(2),
+  .service-grid .service-card:nth-child(3) { order: 0; }
+
+  /* Card = image + text on row 1, a full-width pill button on row 2 (Figma: Frame 32 + span r80).
+     The body uses display:contents (below) so its children place straight into this grid. */
+  .service-card {
+    align-items: start;
+    border-color: rgba(213, 187, 162, 0.55);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(71, 38, 11, 0.08);
+    column-gap: 16px;
+    display: grid;
+    grid-template-areas: "image text" "button button";
+    grid-template-columns: 92px minmax(0, 1fr);
+    padding: 16px;
+    row-gap: 14px;
+  }
+  .service-card-image {
+    background: var(--paper);
+    border-radius: 12px;
+    grid-area: image;
+    height: 92px;
+    width: 92px;
+  }
+  /* The oprema (coffin) photo is a wide 3:2 product shot on a transparent
+     background; the base object-fit:cover crops its ends inside the 92px square.
+     Switch it to contain so the whole coffin shows, centered on the paper tile —
+     the same treatment the info-card illustrations get below. */
+  .service-grid .service-card:first-child .service-card-image img {
+    object-fit: contain;
+  }
+  /* Info card has no text wrapper (img + h3 + p are direct children), so use a grid:
+     image spans the left column, heading + paragraph stack in the right column. */
+  .info-card {
+    align-items: start;
+    border-color: rgba(213, 187, 162, 0.55);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(71, 38, 11, 0.08);
+    column-gap: 16px;
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    min-height: 0;
+    padding: 16px;
+    row-gap: 6px;
+  }
+  /* No white frame around the illustration (Figma bleeds it into the card): drop the paper box and
+     padding so the artwork fills its tile; contain keeps the whole landscape illustration visible. */
+  .info-card img {
+    background: transparent;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    height: 92px;
+    max-width: none;
+    object-fit: contain;
+    object-position: center;
+    padding: 0;
+    width: 92px;
+  }
+  .info-card h3 { grid-column: 2; grid-row: 1; }
+  .info-card p { grid-column: 2; grid-row: 2; }
+  /* Body box dissolves so its text + CTA flow into the card grid (text -> row 1, button -> row 2). */
+  .service-card-body { display: contents; }
+  .service-card-text { gap: 6px; grid-area: text; }
+  .service-card h3,
+  .info-card h3 { font-size: 18px; line-height: 1.25; }
+  .service-card p,
+  .info-card p { font-size: 14px; line-height: 20px; }
+  /* CTA becomes a full-width bordered pill button (Figma span r80, gold border). */
+  .service-card-cta {
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    display: flex;
+    font-size: 14px;
+    grid-area: button;
+    justify-content: center;
+    padding: 11px 16px;
+    width: 100%;
+  }
+
+  /* --- KONTAKT — white frosted card on the photo (cta-panel already styled); mobile sizing. --- */
+  .cta-section { padding: 36px 16px; }
+  .cta-panel { gap: 22px; padding: 28px 20px; border-radius: 20px; }
+  .eyebrow { font-size: 14px; letter-spacing: 1.2px; }
+  .cta-panel h2 { font-size: 24px; line-height: 1.2; }
+  .cta-details { gap: 16px; }
+  .cta-sub { font-size: 14px; }
+  .phone-link { font-size: 24px; line-height: 1.3; }
+  .contact-details { flex-direction: column; gap: 10px; }
+  .contact-detail { font-size: 14px; }
+  .cta-button { width: 100%; }
+
+  /* --- KONTAKT page contact card stacks (info panel on top, form below). --- */
+  .contact-layout { padding: 36px 16px; }
+  .contact-card { grid-template-columns: 1fr; }
+  .contact-info { min-height: 260px; }
+  /* Company registry details (matični broj / PIB / žiro račun) are dropped on
+     mobile (per client) — the stacked card keeps only the reachable contacts. */
+  .contact-podaci { display: none; }
+  .contact-info,
+  .contact-form { padding: 26px 20px; }
+  .contact-info::after {
+    background: linear-gradient(to bottom, transparent, white);
+    bottom: -1px;
+    height: 60px;
+    right: 0;
+    top: auto;
+    width: 100%;
+  }
+
+  /* --- GALLERIES (oprema / cvecara / prevoz / galerija) — Figma mobile shows a 3-col
+         thumbnail grid, not the desktop slider. Hide the main viewer + prev/next, and lay
+         the thumbnails out as a square grid; tapping a thumb opens the lightbox (site.js). --- */
+  .gallery-main { display: none; }
+  .gallery-slider { display: block; }
+  .round-arrow { display: none; }
+  /* No carousel on phones: the viewport stops clipping and the track becomes a plain 3-col grid.
+     Drop the fixed slider width/clip too, so the grid spans the full column. */
+  .thumb-strip { overflow: visible; padding: 0; width: auto; max-width: none; }
+  .thumb-track {
+    gap: 8px;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, 1fr);
+    transform: none !important;
+    transition: none;
+  }
+  .thumb-strip button {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(71, 38, 11, 0.1);
+    height: auto;
+  }
+  .thumb-strip img { object-fit: cover; }
+
+  /* --- LIGHTBOX — on phones the side arrows covered the photo (per client), so the
+         controls wrapper becomes a [prev  1/12  next] row BELOW the image instead. --- */
+  .lightbox:not([hidden]) {
+    flex-direction: column;
+    gap: 18px;
+  }
+  /* Leave room under the photo for the controls row (52px) + gaps even on tall portraits. */
+  .lightbox img { max-height: calc(100svh - 150px); }
+  /* Arrows at the page margins (16px, per client), counter centred between them. The scrim
+     itself pads 24px, so the row bleeds 8px past it on each side to land exactly at 16px. */
+  .lightbox-controls {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 -8px;
+    width: calc(100% + 16px);
+  }
+  .lightbox-controls[hidden] { display: none; }
+  .lightbox-nav {
+    position: static;
+    transform: none;
+  }
+  .lightbox-counter {
+    color: #fdf7f3;
+    display: block;
+    font: 500 15px/1 var(--sans);
+    letter-spacing: 0.04em;
+    min-width: 44px;
+    text-align: center;
+  }
+
+  /* --- FOOTER — Figma: two contact blocks stacked + copyright. Brand block and
+         the Brzi linkovi column are dropped on mobile. --- */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; padding: 40px 0; }
+  .footer-brand { display: none; }
+  .footer-col:has(.footer-links) { display: none; }
+  .site-footer h3 { font-size: 13px; }
+  .footer-contact li,
+  .footer-contact a { font-size: 12px; }
+  /* Copyright + registration stack on their own lines (Figma), not the desktop row. */
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 12px;
+    gap: 8px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  /* The full mobile design — including the gallery thumbnail grid — lives in the <=767 tier
+     above. This block only carries a couple of width tweaks so it never re-overrides it. */
+  .site-footer { padding-inline: 20px; }
+  .gallery-page { padding: 40px 20px 60px; }
+}
+
+/* ============================================================================
+   LARGE-SCREEN SCALE-UP  (Full HD -> 4K)
+   The 1440 design is centred & fixed from 1280 through 1920 (matches the Figma
+   Desktop / Laptop / Full HD frames). Above ~2100px the whole design scales up
+   via --s toward 1.5x at 3840 (the Figma "Desktop 4K" frame). Pure CSS: every
+   scalable px is calc(... * var(--s)); --s is 1 below 2080px so nothing here
+   touches the existing breakpoints. Steps are tuned to common monitor widths
+   (QHD 2560, ultrawide 3440, 4K 3840) so each fixed display gets one clean scale.
+   Each min-width is the monitor width MINUS ~20px: the page always reserves the
+   vertical scrollbar (see `html { scrollbar-gutter }`), so media queries see the
+   monitor width minus the scrollbar — without this offset a 2560 display would land
+   on the 2300 step instead of 2560 (and the symptom was the homepage, which always
+   scrolls, rendering a step smaller than non-scrolling pages). */
+@media (min-width: 2080px) { :root { --s: 1.08; } }
+@media (min-width: 2280px) { :root { --s: 1.16; } }
+@media (min-width: 2540px) { :root { --s: 1.24; } }
+@media (min-width: 2780px) { :root { --s: 1.31; } }
+@media (min-width: 3080px) { :root { --s: 1.38; } }
+@media (min-width: 3420px) { :root { --s: 1.44; } }
+@media (min-width: 3820px) { :root { --s: 1.50; } }
+
+/* (The Cvećara Gerber photo used to switch sizing modes at 2080px here; it is now `auto 100%`
+   at every width — see the .gerber-section base rule — so no wide-screen override is needed.) */

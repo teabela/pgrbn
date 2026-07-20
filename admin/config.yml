@@ -1,0 +1,80 @@
+backend:
+  name: github
+  repo: teabela/pgrbn
+  # MUST equal the Cloudflare Pages *production branch* (an upload commits here, then
+  # that branch is what Cloudflare rebuilds — if they differ, uploads never appear).
+  branch: main
+  # The deployed sveltia-cms-auth Worker (GitHub OAuth relay):
+  base_url: https://sveltia-cms-auth.tea-ekv.workers.dev
+
+# Global fallback media location (the Umrlice collection overrides this to be entry-relative).
+media_folder: assets/uploads
+public_folder: /assets/uploads
+
+# Client-side upload processing: raster images (phone scans) are converted to WebP and
+# capped at 2000px wide before commit — a 4 MB scan lands as a few hundred KB.
+media_libraries:
+  # No stock-photo providers (Pexels/Unsplash/…) in the image picker — the client
+  # only ever uploads their own scans; anything else is confusion.
+  stock_assets: false
+  all:
+    transformations:
+      raster_image:
+        format: webp
+        width: 2000
+        quality: 85
+
+collections:
+  - name: umrlice
+    label: Umrlice
+    label_singular: Umrlica
+    folder: content/umrlice
+    create: true
+    # Folder + slug derive from the entry's date field. The trailing `/index` puts each
+    # entry in its own subfolder as index.md (…/YYYY/MM/<slug>/index.md), with the image
+    # stored beside it — matching the layout build.mjs and the migration expect.
+    path: '{{year}}/{{month}}/{{slug}}/index'
+    slug: '{{year}}-{{month}}-{{day}}-{{uuid_shorter}}'
+    identifier_field: date
+    # Display-only: list entries as "01.12.2023." instead of the raw stored
+    # value (legacy entries hold full ISO timestamps).
+    summary: "{{fields.date | date('DD.MM.YYYY.')}}"
+    # Entry-relative media: the image is stored beside index.md and the
+    # frontmatter should hold just the filename.
+    media_folder: ''
+    public_folder: ''
+    # Entry list: newest first by default, and grouped by year/month (Sveltia's
+    # "Group" control) so 300+ entries stay browsable. Patterns run against the
+    # stored ISO date string, e.g. "2023-12-01T00:00:02.000Z" -> "2023-12".
+    sortable_fields:
+      fields: [date]
+      default:
+        field: date
+        direction: descending
+    view_groups:
+      groups:
+        - name: godina
+          label: Godina
+          field: date
+          pattern: '^\d{4}'
+        - name: mesec
+          label: Godina i mesec
+          field: date
+          pattern: '^\d{4}-\d{2}'
+      default: mesec
+    fields:
+      # Date-only: the picker hides the time; stores plain YYYY-MM-DD.
+      - { name: date, label: Datum, widget: datetime, time_format: false, format: 'YYYY-MM-DD', required: true }
+      # Auto creation timestamp (build tie-break for same-date entries).
+      - { name: created, widget: hidden, default: '{{datetime}}' }
+      # All scans for the date in one entry; list order = page order. A list of
+      # single-image items (not `image` + `multiple: true`) because only the list
+      # widget offers reordering (Move Up/Down + drag) in this Sveltia build.
+      # choose_url: false — file uploads only; a pasted/linked URL would store a
+      # remote reference the build can't process (and can't be quality-controlled).
+      - name: images
+        label: Slike umrlica
+        widget: list
+        required: true
+        min: 1
+        field: { name: image, label: Slika, widget: image, choose_url: false }

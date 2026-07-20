@@ -1,0 +1,27 @@
+.claude
+.mcp.json
+.superpowers/
+.playwright-mcp/
+figma-ref/
+
+# Node build (umrlice CMS)
+node_modules/
+dist/
+
+# Secrets — never commit
+.figma-token
+
+# Session scratch screenshots (safe to delete)
+chk-*.png
+seam-*.png
+retina*.png
+sub-*-1920.png
+grad-*.png
+cmp-*.png
+*.md
+
+# ...but umrlice CMS entries are markdown content and MUST be tracked
+!content/**/*.md
+
+# Local planning docs/specs — never published
+docs/

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="sr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Native responsive layout: no JS zoom. The design is fluid via CSS clamp()/svh,
+         with content held in a centred max-width column. -->
+    <title>Cvetni aranžmani | Pogrebne usluge Balan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="preload" href="assets/fonts/edwardian-script-subset.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="styles.css?v=103">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="logo" href="index.html" aria-label="Balan početna">
+        <span>Balan</span>
+        <small>Pogrebne usluge i cvetni aranžmani</small>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Otvori navigaciju" aria-expanded="false"><span></span></button>
+      <nav class="main-nav" aria-label="Glavna navigacija">
+        <a href="index.html">Početna</a><span class="nav-divider"></span>
+        <div class="services-menu"><button class="active" type="button" aria-haspopup="true" aria-expanded="false">Usluge<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="dropdown"><a href="oprema.html">Pogrebna oprema</a><a href="cvecara.html">Cvetni aranžmani</a><a href="prevoz.html">Prevoz</a></div></div>
+        <span class="nav-divider"></span><a href="galerija.html">Galerija</a><span class="nav-divider"></span><a href="umrlice.html">Umrlice</a><span class="nav-divider"></span><a href="onama.html">O nama</a><span class="nav-divider"></span><a href="kontakt.html">Kontakt</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page-hero" style="--hero-image: url('assets/hero-cvecara.webp')">
+        <div class="page-hero-copy">
+          <h1>Cvetni aranžmani</h1>
+          <img class="ornament" src="assets/divider.webp" alt="">
+          <p>Izrada buketa, venaca, korpi, bidermajera i aranžmana za groblje</p>
+        </div>
+        <button class="scroll-cue" type="button" aria-label="Nastavite dole">
+          <span class="scroll-cue-text">NASTAVITE DOLE</span>
+          <svg class="scroll-cue-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </section>
+
+      <section class="section gallery-page">
+        <div class="section-title"><span class="decor decor-left"><span class="dot dot-a"></span><span class="dot dot-b"></span><span class="line"></span></span><h2>Galerija</h2><span class="decor decor-right"><span class="dot dot-a"></span><span class="dot dot-b"></span><span class="line"></span></span></div>
+        <div class="gallery-module gallery-module--fit">
+          <div class="filter-row">
+            <button class="filter-icon" type="button" aria-label="Filteri"><svg viewBox="0 0 18 12" aria-hidden="true"><path d="M1 1h16M3 6h12M6 11h6" fill="none" stroke="#47260b" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <button class="chip active" type="button" data-filter="all">Svi</button>
+            <button class="chip" type="button" data-filter="bidermajeri">Bidermajeri</button>
+            <button class="chip" type="button" data-filter="buketi">Buketi</button>
+            <button class="chip" type="button" data-filter="ikebane">Ikebane</button>
+            <button class="chip" type="button" data-filter="ikebane-groblje">Ikebane za groblje</button>
+            <button class="chip" type="button" data-filter="korpe">Korpe</button>
+            <button class="chip" type="button" data-filter="venci">Venci</button>
+          </div>
+          <div class="gallery-main">
+            <img src="assets/cvecara/bidermajeri/bidermajer1.webp" alt="Bidermajer 1">
+          </div>
+          <div class="gallery-slider">
+            <button class="round-arrow" type="button" data-prev aria-label="Prethodna slika"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="thumb-strip">
+              <button data-gallery-item data-category="bidermajeri" data-title="Bidermajer 1" data-src="assets/cvecara/bidermajeri/bidermajer1.webp" data-alt="Bidermajer 1"><img src="assets/cvecara/bidermajeri/bidermajer1-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="bidermajeri" data-title="Bidermajer 2" data-src="assets/cvecara/bidermajeri/bidermajer2.webp" data-alt="Bidermajer 2"><img src="assets/cvecara/bidermajeri/bidermajer2-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="bidermajeri" data-title="Bidermajer 3" data-src="assets/cvecara/bidermajeri/bidermajer3.webp" data-alt="Bidermajer 3"><img src="assets/cvecara/bidermajeri/bidermajer3-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="buketi" data-title="Buket 1" data-src="assets/cvecara/buketi/buket01.webp" data-alt="Buket 1"><img src="assets/cvecara/buketi/buket01-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="buketi" data-title="Buket 2" data-src="assets/cvecara/buketi/buket02.webp" data-alt="Buket 2"><img src="assets/cvecara/buketi/buket02-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="buketi" data-title="Buket 3" data-src="assets/cvecara/buketi/buket03.webp" data-alt="Buket 3"><img src="assets/cvecara/buketi/buket03-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="buketi" data-title="Buket 4" data-src="assets/cvecara/buketi/buket04.webp" data-alt="Buket 4"><img src="assets/cvecara/buketi/buket04-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="buketi" data-title="Buket 5" data-src="assets/cvecara/buketi/buket05.webp" data-alt="Buket 5"><img src="assets/cvecara/buketi/buket05-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="buketi" data-title="Buket 6" data-src="assets/cvecara/buketi/buket06.webp" data-alt="Buket 6"><img src="assets/cvecara/buketi/buket06-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="buketi" data-title="Buket 7" data-src="assets/cvecara/buketi/buket07.webp" data-alt="Buket 7"><img src="assets/cvecara/buketi/buket07-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 1" data-src="assets/cvecara/ikebane/ikabana01.webp" data-alt="Ikebana 1"><img src="assets/cvecara/ikebane/ikabana01-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 2" data-src="assets/cvecara/ikebane/ikabana02.webp" data-alt="Ikebana 2"><img src="assets/cvecara/ikebane/ikabana02-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 3" data-src="assets/cvecara/ikebane/ikabana03.webp" data-alt="Ikebana 3"><img src="assets/cvecara/ikebane/ikabana03-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 4" data-src="assets/cvecara/ikebane/ikabana04.webp" data-alt="Ikebana 4"><img src="assets/cvecara/ikebane/ikabana04-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 5" data-src="assets/cvecara/ikebane/ikabana05.webp" data-alt="Ikebana 5"><img src="assets/cvecara/ikebane/ikabana05-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 6" data-src="assets/cvecara/ikebane/ikabana06.webp" data-alt="Ikebana 6"><img src="assets/cvecara/ikebane/ikabana06-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 7" data-src="assets/cvecara/ikebane/ikabana07.webp" data-alt="Ikebana 7"><img src="assets/cvecara/ikebane/ikabana07-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 8" data-src="assets/cvecara/ikebane/ikabana08.webp" data-alt="Ikebana 8"><img src="assets/cvecara/ikebane/ikabana08-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 9" data-src="assets/cvecara/ikebane/ikabana09.webp" data-alt="Ikebana 9"><img src="assets/cvecara/ikebane/ikabana09-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 10" data-src="assets/cvecara/ikebane/ikabana10.webp" data-alt="Ikebana 10"><img src="assets/cvecara/ikebane/ikabana10-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 11" data-src="assets/cvecara/ikebane/ikabana11.webp" data-alt="Ikebana 11"><img src="assets/cvecara/ikebane/ikabana11-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 12" data-src="assets/cvecara/ikebane/ikabana12.webp" data-alt="Ikebana 12"><img src="assets/cvecara/ikebane/ikabana12-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 13" data-src="assets/cvecara/ikebane/ikabana13.webp" data-alt="Ikebana 13"><img src="assets/cvecara/ikebane/ikabana13-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 14" data-src="assets/cvecara/ikebane/ikabana14.webp" data-alt="Ikebana 14"><img src="assets/cvecara/ikebane/ikabana14-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 15" data-src="assets/cvecara/ikebane/ikabana15.webp" data-alt="Ikebana 15"><img src="assets/cvecara/ikebane/ikabana15-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 16" data-src="assets/cvecara/ikebane/ikabana16.webp" data-alt="Ikebana 16"><img src="assets/cvecara/ikebane/ikabana16-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane" data-title="Ikebana 17" data-src="assets/cvecara/ikebane/ikabana17.webp" data-alt="Ikebana 17"><img src="assets/cvecara/ikebane/ikabana17-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 1" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje01.webp" data-alt="Ikebana za groblje 1"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje01-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 2" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje02.webp" data-alt="Ikebana za groblje 2"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje02-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 3" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje03.webp" data-alt="Ikebana za groblje 3"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje03-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 4" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje04.webp" data-alt="Ikebana za groblje 4"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje04-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 5" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje05.webp" data-alt="Ikebana za groblje 5"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje05-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 6" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje06.webp" data-alt="Ikebana za groblje 6"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje06-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 7" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje07.webp" data-alt="Ikebana za groblje 7"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje07-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 8" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje08.webp" data-alt="Ikebana za groblje 8"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje08-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 9" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje09.webp" data-alt="Ikebana za groblje 9"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje09-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="ikebane-groblje" data-title="Ikebana za groblje 10" data-src="assets/cvecara/ikebane-groblje/ikabana-za-groblje10.webp" data-alt="Ikebana za groblje 10"><img src="assets/cvecara/ikebane-groblje/ikabana-za-groblje10-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 1" data-src="assets/cvecara/korpe/korpa01.webp" data-alt="Korpa 1"><img src="assets/cvecara/korpe/korpa01-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 2" data-src="assets/cvecara/korpe/korpa02.webp" data-alt="Korpa 2"><img src="assets/cvecara/korpe/korpa02-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 3" data-src="assets/cvecara/korpe/korpa03.webp" data-alt="Korpa 3"><img src="assets/cvecara/korpe/korpa03-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 4" data-src="assets/cvecara/korpe/korpa04.webp" data-alt="Korpa 4"><img src="assets/cvecara/korpe/korpa04-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 5" data-src="assets/cvecara/korpe/korpa05.webp" data-alt="Korpa 5"><img src="assets/cvecara/korpe/korpa05-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 6" data-src="assets/cvecara/korpe/korpa06.webp" data-alt="Korpa 6"><img src="assets/cvecara/korpe/korpa06-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 7" data-src="assets/cvecara/korpe/korpa07.webp" data-alt="Korpa 7"><img src="assets/cvecara/korpe/korpa07-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 8" data-src="assets/cvecara/korpe/korpa08.webp" data-alt="Korpa 8"><img src="assets/cvecara/korpe/korpa08-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 9" data-src="assets/cvecara/korpe/korpa09.webp" data-alt="Korpa 9"><img src="assets/cvecara/korpe/korpa09-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="korpe" data-title="Korpa 10" data-src="assets/cvecara/korpe/korpa10.webp" data-alt="Korpa 10"><img src="assets/cvecara/korpe/korpa10-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 1" data-src="assets/cvecara/venci/venac01.webp" data-alt="Venac 1"><img src="assets/cvecara/venci/venac01-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 2" data-src="assets/cvecara/venci/venac02.webp" data-alt="Venac 2"><img src="assets/cvecara/venci/venac02-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 3" data-src="assets/cvecara/venci/venac03.webp" data-alt="Venac 3"><img src="assets/cvecara/venci/venac03-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 4" data-src="assets/cvecara/venci/venac04.webp" data-alt="Venac 4"><img src="assets/cvecara/venci/venac04-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 5" data-src="assets/cvecara/venci/venac05.webp" data-alt="Venac 5"><img src="assets/cvecara/venci/venac05-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 6" data-src="assets/cvecara/venci/venac06.webp" data-alt="Venac 6"><img src="assets/cvecara/venci/venac06-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 7" data-src="assets/cvecara/venci/venac07.webp" data-alt="Venac 7"><img src="assets/cvecara/venci/venac07-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 8" data-src="assets/cvecara/venci/venac08.webp" data-alt="Venac 8"><img src="assets/cvecara/venci/venac08-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 9" data-src="assets/cvecara/venci/venac09.webp" data-alt="Venac 9"><img src="assets/cvecara/venci/venac09-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 10" data-src="assets/cvecara/venci/venac10.webp" data-alt="Venac 10"><img src="assets/cvecara/venci/venac10-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 11" data-src="assets/cvecara/venci/venac11.webp" data-alt="Venac 11"><img src="assets/cvecara/venci/venac11-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 12" data-src="assets/cvecara/venci/venac12.webp" data-alt="Venac 12"><img src="assets/cvecara/venci/venac12-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 13" data-src="assets/cvecara/venci/venac13.webp" data-alt="Venac 13"><img src="assets/cvecara/venci/venac13-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 14" data-src="assets/cvecara/venci/venac14.webp" data-alt="Venac 14"><img src="assets/cvecara/venci/venac14-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 15" data-src="assets/cvecara/venci/venac15.webp" data-alt="Venac 15"><img src="assets/cvecara/venci/venac15-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 16" data-src="assets/cvecara/venci/venac16.webp" data-alt="Venac 16"><img src="assets/cvecara/venci/venac16-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 17" data-src="assets/cvecara/venci/venac17.webp" data-alt="Venac 17"><img src="assets/cvecara/venci/venac17-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 18" data-src="assets/cvecara/venci/venac18.webp" data-alt="Venac 18"><img src="assets/cvecara/venci/venac18-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 19" data-src="assets/cvecara/venci/venac19.webp" data-alt="Venac 19"><img src="assets/cvecara/venci/venac19-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 20" data-src="assets/cvecara/venci/venac20.webp" data-alt="Venac 20"><img src="assets/cvecara/venci/venac20-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 21" data-src="assets/cvecara/venci/venac21.webp" data-alt="Venac 21"><img src="assets/cvecara/venci/venac21-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 22" data-src="assets/cvecara/venci/venac22.webp" data-alt="Venac 22"><img src="assets/cvecara/venci/venac22-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 23" data-src="assets/cvecara/venci/venac23.webp" data-alt="Venac 23"><img src="assets/cvecara/venci/venac23-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 24" data-src="assets/cvecara/venci/venac24.webp" data-alt="Venac 24"><img src="assets/cvecara/venci/venac24-thumb.webp" alt="" loading="lazy"></button>
+              <button data-gallery-item data-category="venci" data-title="Venac 25" data-src="assets/cvecara/venci/venac25.webp" data-alt="Venac 25"><img src="assets/cvecara/venci/venac25-thumb.webp" alt="" loading="lazy"></button>
+            </div>
+            <button class="round-arrow" type="button" data-next aria-label="Sledeća slika"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="logo" href="index.html"><span>Balan</span><small>Pogrebne usluge i cvetni aranžmani</small></a>
+          <p>Pružamo kompletne pogrebne usluge sa brigom i poštovanjem, dostupni 24 sata dnevno.</p>
+        </div>
+        <div class="footer-col">
+          <h3>Pogrebne usluge</h3>
+          <ul class="footer-contact">
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.333 6.667c0 4-5.333 8-5.333 8s-5.333-4-5.333-8a5.333 5.333 0 0 1 10.666 0Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="6.667" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>Trg Andrije Lukića 4, Vršac</span></li>
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M14.667 11.28v2a1.333 1.333 0 0 1-1.453 1.333A13.193 13.193 0 0 1 7.46 12.567a13 13 0 0 1-4-4 13.193 13.193 0 0 1-2.047-5.78A1.333 1.333 0 0 1 2.74 1.333h2a1.333 1.333 0 0 1 1.333 1.147c.085.64.241 1.269.467 1.873a1.333 1.333 0 0 1-.3 1.407l-.847.847a10.667 10.667 0 0 0 4 4l.847-.847a1.333 1.333 0 0 1 1.406-.3c.605.226 1.234.382 1.874.467a1.333 1.333 0 0 1 1.147 1.353Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><a href="tel:+38163353545">+381 63 35 35 45</a></li>
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M14.667 11.28v2a1.333 1.333 0 0 1-1.453 1.333A13.193 13.193 0 0 1 7.46 12.567a13 13 0 0 1-4-4 13.193 13.193 0 0 1-2.047-5.78A1.333 1.333 0 0 1 2.74 1.333h2a1.333 1.333 0 0 1 1.333 1.147c.085.64.241 1.269.467 1.873a1.333 1.333 0 0 1-.3 1.407l-.847.847a10.667 10.667 0 0 0 4 4l.847-.847a1.333 1.333 0 0 1 1.406-.3c.605.226 1.234.382 1.874.467a1.333 1.333 0 0 1 1.147 1.353Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><a href="tel:+38113839475">+381 13 839 475</a></li>
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.333" y="2.667" width="13.333" height="10.667" rx="1.333" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="m14.667 4.667-5.98 3.8a1.293 1.293 0 0 1-1.374 0L1.333 4.667" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><a href="mailto:pogrebnobalan@gmail.com">pogrebnobalan@gmail.com</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Cvećara Gerber</h3>
+          <ul class="footer-contact">
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.333 6.667c0 4-5.333 8-5.333 8s-5.333-4-5.333-8a5.333 5.333 0 0 1 10.666 0Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="6.667" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>Trg Andrije Lukića bb, Vršac</span></li>
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M14.667 11.28v2a1.333 1.333 0 0 1-1.453 1.333A13.193 13.193 0 0 1 7.46 12.567a13 13 0 0 1-4-4 13.193 13.193 0 0 1-2.047-5.78A1.333 1.333 0 0 1 2.74 1.333h2a1.333 1.333 0 0 1 1.333 1.147c.085.64.241 1.269.467 1.873a1.333 1.333 0 0 1-.3 1.407l-.847.847a10.667 10.667 0 0 0 4 4l.847-.847a1.333 1.333 0 0 1 1.406-.3c.605.226 1.234.382 1.874.467a1.333 1.333 0 0 1 1.147 1.353Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><a href="tel:+38163353545">+381 63 35 35 45</a></li>
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M14.667 11.28v2a1.333 1.333 0 0 1-1.453 1.333A13.193 13.193 0 0 1 7.46 12.567a13 13 0 0 1-4-4 13.193 13.193 0 0 1-2.047-5.78A1.333 1.333 0 0 1 2.74 1.333h2a1.333 1.333 0 0 1 1.333 1.147c.085.64.241 1.269.467 1.873a1.333 1.333 0 0 1-.3 1.407l-.847.847a10.667 10.667 0 0 0 4 4l.847-.847a1.333 1.333 0 0 1 1.406-.3c.605.226 1.234.382 1.874.467a1.333 1.333 0 0 1 1.147 1.353Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><a href="tel:+381638863916">+381 63 886 39 16</a></li>
+            <li><svg class="footer-icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.333" y="2.667" width="13.333" height="10.667" rx="1.333" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="m14.667 4.667-5.98 3.8a1.293 1.293 0 0 1-1.374 0L1.333 4.667" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><a href="mailto:gerbervs@hotmail.com">gerbervs@hotmail.com</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Brzi linkovi</h3>
+          <ul class="footer-links">
+            <li><a href="oprema.html">Oprema</a></li>
+            <li><a href="cvecara.html">Cvetni aranžmani</a></li>
+            <li><a href="prevoz.html">Prevoz</a></li>
+            <li><a href="galerija.html">Galerija</a></li>
+            <li><a href="umrlice.html">Umrlice</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Pogrebne usluge Balan. Sva prava zadržana.</p>
+        <p>Matični broj: 62277971 &nbsp;<strong>·</strong>&nbsp; PIB: 106799720</p>
+      </div>
+    </footer>
+    <script src="site.js?v=37"></script>
+  </body>
+</html>
