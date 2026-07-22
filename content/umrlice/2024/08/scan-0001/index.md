@@ -1,16 +1,16 @@
 ---
 images:
-  - scan-0001.webp
-  - stanko.webp
-  - unnamed-1.webp
-  - unnamed-2.webp
-  - unnamed.webp
-  - voicica.webp
-  - vojna.webp
-  - vukosav.webp
   - marko.webp
-  - popov.webp
   - svera.webp
+  - stanko.webp
+  - unnamed-2.webp
+  - unnamed-1.webp
+  - unnamed.webp
+  - vukosav.webp
+  - popov.webp
+  - vojna.webp
+  - scan-0001.webp
+  - voicica.webp
 date: '2024-08-01'
 ---
 
