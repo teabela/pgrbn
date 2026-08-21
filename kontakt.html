@@ -13,7 +13,7 @@
     <link rel="alternate icon" href="favicon-32.png" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="preload" href="assets/fonts/edwardian-script-subset.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=103">
+    <link rel="stylesheet" href="styles.css?v=104">
   </head>
   <body>
     <header class="site-header">
@@ -43,7 +43,7 @@
       </section>
 
       <section class="contact-layout">
-        <form class="contact-card js-contact-form" action="#" method="post" novalidate>
+        <form class="contact-card js-contact-form" action="https://formspree.io/f/xljrzark" method="post" accept-charset="UTF-8">
           <aside class="contact-info">
             <div>
               <h2>Pogrebne usluge Balan</h2>
@@ -61,14 +61,16 @@
             </div>
           </aside>
           <div class="contact-form">
+            <input type="hidden" name="subject" value="Nova poruka sa sajta Balan">
+            <input class="contact-honeypot" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
             <div class="input-fields">
-              <label>Vaše ime *<input type="text" name="name" required></label>
-              <label>Vaša email adresa *<input type="email" name="email" required></label>
-              <label>Naslov<input type="text" name="subject"></label>
-              <label>Poruka *<textarea name="message" required></textarea></label>
+              <label for="contact-name">Vaše ime *<input id="contact-name" type="text" name="name" minlength="2" maxlength="120" autocomplete="name" required></label>
+              <label for="contact-email">Vaša email adresa *<input id="contact-email" type="email" name="email" maxlength="254" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
+              <label for="contact-subject">Naslov<input id="contact-subject" type="text" name="Naslov" maxlength="160"></label>
+              <label for="contact-message">Poruka *<textarea id="contact-message" name="message" minlength="10" maxlength="5000" required></textarea></label>
             </div>
             <button type="submit">Pošalji</button>
-            <p class="form-status" role="status"></p>
+            <p class="form-status" role="status" aria-live="polite" aria-atomic="true"></p>
           </div>
         </form>
       </section>
@@ -115,6 +117,6 @@
         <p>Matični broj: 62277971 &nbsp;<strong>·</strong>&nbsp; PIB: 106799720</p>
       </div>
     </footer>
-    <script src="site.js?v=37"></script>
+    <script src="site.js?v=38"></script>
   </body>
 </html>

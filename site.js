@@ -372,16 +372,79 @@ document.querySelectorAll(".gallery-module").forEach((gallery) => {
 
 document.querySelectorAll("form.js-contact-form").forEach((form) => {
   const status = form.querySelector(".form-status");
-  form.addEventListener("submit", (event) => {
+  const submitButton = form.querySelector('button[type="submit"]');
+  const submitLabel = submitButton.textContent;
+  const trimmedFields = [
+    { field: form.elements.namedItem("name"), message: "Molimo unesite vaše ime." },
+    { field: form.elements.namedItem("message"), message: "Molimo unesite poruku." },
+  ];
+  let submitting = false;
+
+  const setStatus = (message, state = "") => {
+    status.textContent = message;
+    if (state) status.dataset.state = state;
+    else delete status.dataset.state;
+  };
+
+  trimmedFields.forEach(({ field }) => {
+    field.addEventListener("input", () => field.setCustomValidity(""));
+  });
+
+  form.addEventListener("invalid", () => {
+    form.classList.add("was-validated");
+    setStatus("Molimo proverite označena polja.", "error");
+  }, true);
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (submitting) return;
+
+    trimmedFields.forEach(({ field, message }) => {
+      field.setCustomValidity(field.value.trim() ? "" : message);
+    });
+
     if (!form.checkValidity()) {
       form.classList.add("was-validated");
-      status.textContent = "Molimo popunite obavezna polja.";
+      setStatus("Molimo proverite označena polja.", "error");
+      form.reportValidity();
       return;
     }
-    form.reset();
-    form.classList.remove("was-validated");
-    status.textContent = "Hvala. Poruka je spremna za slanje.";
+
+    const data = new FormData(form);
+    ["name", "email", "Naslov", "message"].forEach((name) => {
+      const value = data.get(name);
+      if (typeof value === "string") data.set(name, value.trim());
+    });
+
+    submitting = true;
+    submitButton.disabled = true;
+    submitButton.textContent = "Šaljem…";
+    form.setAttribute("aria-busy", "true");
+    setStatus("Šaljem poruku…", "sending");
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) throw new Error(`Formspree returned HTTP ${response.status}`);
+
+      form.reset();
+      trimmedFields.forEach(({ field }) => field.setCustomValidity(""));
+      form.classList.remove("was-validated");
+      setStatus("Hvala. Vaša poruka je uspešno poslata.", "success");
+    } catch (error) {
+      console.error("Contact form submission failed.", error);
+      setStatus("Poruka nije poslata. Pokušajte ponovo ili nas kontaktirajte telefonom.", "error");
+    } finally {
+      submitting = false;
+      submitButton.disabled = false;
+      submitButton.textContent = submitLabel;
+      form.removeAttribute("aria-busy");
+    }
   });
 });
 
