@@ -1,0 +1,24 @@
+# Old WordPress URLs -> new site (301). Cloudflare Pages already 308s /oprema/ -> /oprema etc.
+# Flower category sub-pages -> the one flower page, filtered by category
+/cvetni-aranzmani/venci  /cvetni-aranzmani#venci  301
+/cvetni-aranzmani/venci/  /cvetni-aranzmani#venci  301
+/cvetni-aranzmani/buketi  /cvetni-aranzmani#buketi  301
+/cvetni-aranzmani/buketi/  /cvetni-aranzmani#buketi  301
+/cvetni-aranzmani/bidermajeri  /cvetni-aranzmani#bidermajeri  301
+/cvetni-aranzmani/bidermajeri/  /cvetni-aranzmani#bidermajeri  301
+/cvetni-aranzmani/ikebane  /cvetni-aranzmani#ikebane  301
+/cvetni-aranzmani/ikebane/  /cvetni-aranzmani#ikebane  301
+/cvetni-aranzmani/ikebane-za-groblje  /cvetni-aranzmani#ikebane-za-groblje  301
+/cvetni-aranzmani/ikebane-za-groblje/  /cvetni-aranzmani#ikebane-za-groblje  301
+/cvetni-aranzmani/korpe  /cvetni-aranzmani#korpe  301
+/cvetni-aranzmani/korpe/  /cvetni-aranzmani#korpe  301
+# WordPress attachment pages (one per scanned obituary / photo) -> their parent page
+/umrlice/:slug  /umrlice  301
+/umrlice/:slug/  /umrlice  301
+/o-nama/:slug  /o-nama  301
+/o-nama/:slug/  /o-nama  301
+/pogrebne-usluge-balan/*  /  301
+# Yoast sitemaps -> ours
+/sitemap_index.xml  /sitemap.xml  301
+/page-sitemap.xml  /sitemap.xml  301
+/attachment-sitemap.xml  /sitemap.xml  301

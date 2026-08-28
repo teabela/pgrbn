@@ -1419,24 +1419,6 @@ p {
   display: none;
 }
 
-.filter-icon {
-  align-items: center;
-  background: #d5bba2;
-  border: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  display: inline-flex;
-  flex-shrink: 0;
-  height: 48px;
-  justify-content: center;
-  padding: 0;
-  width: 48px;
-}
-
-.filter-icon svg {
-  height: 12px;
-  width: 18px;
-}
 
 .chip {
   align-items: center;

@@ -163,6 +163,22 @@ async function injectGrid(entries) {
   await writeFile(file, html.replace(re, block), 'utf8');
 }
 
+const SITE_URL = 'https://pogrebneusluge-vrsac.rs';
+const PAGES = ['/', '/o-nama', '/oprema', '/cvetni-aranzmani', '/prevoz', '/galerija', '/umrlice', '/kontakt'];
+
+// sitemap.xml: the 8 pages; /umrlice carries the newest entry's date as lastmod so
+// crawlers see that it changes weekly. Other pages have no reliable change date.
+async function emitSitemap(entries) {
+  const newest = entries[0] ? entries[0].when.toISOString().slice(0, 10) : null;
+  const urls = PAGES.map((p) => {
+    const lastmod = p === '/umrlice' && newest ? `<lastmod>${newest}</lastmod>` : '';
+    const freq = p === '/umrlice' ? 'weekly' : 'monthly';
+    return `  <url><loc>${SITE_URL}${p}</loc>${lastmod}<changefreq>${freq}</changefreq></url>`;
+  });
+  const xml = ['<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', ...urls, '</urlset>', ''].join('\n');
+  await writeFile(path.join(DIST, 'sitemap.xml'), xml, 'utf8');
+}
 async function main() {
   if (!existsSync(CONTENT_DIR)) throw new Error(`No content at ${CONTENT_DIR}`);
   const entries = await loadEntries();
@@ -171,6 +187,7 @@ async function main() {
   await copyStatic();
   await emitImages(items);
   await injectGrid(items);
+  await emitSitemap(entries);
   console.log(`Built ${items.length} umrlice images (${Math.min(VISIBLE_COUNT, items.length)} visible) from ${entries.length} entries.`);
 }
 

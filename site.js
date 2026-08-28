@@ -323,6 +323,16 @@ document.querySelectorAll(".gallery-module").forEach((gallery) => {
     });
   });
 
+  // Deep link: /cvetni-aranzmani#venci (the old site's sub-page URLs redirect here) pre-selects
+  // the chip whose id matches the hash. Also reacts to in-page hash changes.
+  const applyHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const chip = id && filters.find((c) => c.id === id);
+    if (chip && !chip.classList.contains("active")) chip.click();
+  };
+  applyHash();
+  window.addEventListener("hashchange", applyHash);
+
   items.forEach((item) => {
     item.addEventListener("click", () => {
       const i = visible.indexOf(item);
