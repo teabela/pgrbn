@@ -139,18 +139,25 @@ function anchor(e) {
 
 function renderInner(entries) {
   const visible = entries.slice(0, VISIBLE_COUNT).map(anchor).join('\n');
-  const archive = entries.slice(VISIBLE_COUNT).map(anchor).join('\n');
-  return [
+  const older = entries.slice(VISIBLE_COUNT);
+  const lines = [
     '        <div class="obituary-grid">',
     visible,
     '        </div>',
-    '        <button class="btn-show-older" type="button" data-show-older>Prikaži starije umrlice</button>',
-    '        <div class="obituary-archive" hidden>',
-    '          <div class="obituary-grid">',
-    archive,
-    '          </div>',
-    '        </div>',
-  ].join('\n');
+  ];
+  // Only offer the "show older" button when there is something older to reveal; with few
+  // entries it would otherwise open an empty archive (seen live on 2026-09-02).
+  if (older.length > 0) {
+    lines.push(
+      '        <button class="btn-show-older" type="button" data-show-older>Prikaži starije umrlice</button>',
+      '        <div class="obituary-archive" hidden>',
+      '          <div class="obituary-grid">',
+      older.map(anchor).join('\n'),
+      '          </div>',
+      '        </div>',
+    );
+  }
+  return lines.join('\n');
 }
 
 async function injectGrid(entries) {
